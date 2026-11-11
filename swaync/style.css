@@ -1,0 +1,286 @@
+* {
+  font-family: "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 13px;
+}
+
+/* ---------- Popup notifications ---------- */
+.notification-row {
+  outline: none;
+}
+
+.notification-row .notification-background {
+  padding: 6px 10px;
+}
+
+.notification-row .notification-background .notification {
+  background: rgba(30, 30, 46, 0.8);
+  color: #cdd6f4;
+  border: 1px solid rgba(180, 190, 254, 0.25);
+  border-radius: 14px;
+  padding: 0;
+}
+
+.notification-row .notification-background .notification.critical {
+  border-color: #f38ba8;
+}
+
+.notification .notification-default-action {
+  padding: 10px;
+  border-radius: 14px;
+}
+
+.notification .notification-default-action:hover {
+  background: rgba(49, 50, 68, 0.85);
+}
+
+.notification-content .summary {
+  font-weight: 700;
+  color: #cdd6f4;
+}
+
+.notification-content .body {
+  color: #a6adc8;
+}
+
+.notification-content .time {
+  color: #6c7086;
+}
+
+.notification-content .image {
+  border-radius: 10px;
+}
+
+/* Action buttons under a notification */
+.notification-action {
+  background: rgba(49, 50, 68, 0.85);
+  color: #cdd6f4;
+  border: none;
+  border-radius: 10px;
+  margin: 0 8px 8px 8px;
+}
+
+.notification-action:hover {
+  background: #b4befe;
+}
+
+.notification-action:hover label {
+  color: #1e1e2e;
+}
+
+/* Progress bar (volume/brightness OSD-like notifications) */
+.notification progressbar trough {
+  background: rgba(69, 71, 90, 0.8);
+  border-radius: 6px;
+  min-height: 6px;
+}
+
+.notification progressbar progress {
+  background: #b4befe;
+  border-radius: 6px;
+  min-height: 6px;
+}
+
+.close-button {
+  background: #f38ba8;
+  color: #1e1e2e;
+  border-radius: 100%;
+  margin: 6px;
+  padding: 0;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.close-button:hover {
+  background: #eba0ac;
+}
+
+/* ---------- Control center ---------- */
+.control-center {
+  background: rgba(30, 30, 46, 0.8);
+  color: #cdd6f4;
+  border: 1px solid rgba(180, 190, 254, 0.25);
+  border-radius: 16px;
+}
+
+.control-center .notification-row .notification-background {
+  padding: 4px 10px;
+}
+
+.control-center .notification-row .notification-background .notification {
+  background: rgba(49, 50, 68, 0.7);
+}
+
+/* Title */
+.widget-title {
+  margin: 10px;
+  color: #b4befe;
+}
+
+.widget-title > label {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.widget-title > button {
+  background: rgba(49, 50, 68, 0.85);
+  color: #cdd6f4;
+  border: none;
+  border-radius: 10px;
+  padding: 4px 12px;
+}
+
+.widget-title > button:hover {
+  background: #f38ba8;
+  color: #1e1e2e;
+}
+
+/* Do not disturb */
+.widget-dnd {
+  margin: 0 10px 10px 10px;
+}
+
+.widget-dnd > switch {
+  background: rgba(49, 50, 68, 0.85);
+  border-radius: 12px;
+  border: none;
+}
+
+.widget-dnd > switch:checked {
+  background: #b4befe;
+}
+
+.widget-dnd > switch slider {
+  background: #cdd6f4;
+  border-radius: 12px;
+}
+
+/* ---------- Quick toggles ---------- */
+.widget-buttons-grid {
+  margin: 0 10px 10px 10px;
+  padding: 6px;
+  background: rgba(49, 50, 68, 0.45);
+  border-radius: 14px;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild:hover {
+  background: none;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+  background: rgba(49, 50, 68, 0.85);
+  color: #cdd6f4;
+  border: none;
+  border-radius: 12px;
+  min-height: 44px;
+  margin: 3px;
+  font-size: 18px;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+  background: rgba(69, 71, 90, 0.95);
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:checked {
+  background: #b4befe;
+  color: #1e1e2e;
+}
+
+/* ---------- Sliders (volume / brightness) ---------- */
+.widget-volume,
+.widget-backlight {
+  margin: 0 10px 10px 10px;
+  padding: 8px 12px;
+  background: rgba(49, 50, 68, 0.45);
+  border-radius: 14px;
+}
+
+.widget-volume label,
+.widget-backlight label {
+  font-size: 16px;
+  color: #b4befe;
+  min-width: 28px;
+}
+
+.widget-volume scale trough,
+.widget-backlight scale trough {
+  background: rgba(69, 71, 90, 0.9);
+  border-radius: 8px;
+  min-height: 8px;
+}
+
+.widget-volume scale highlight,
+.widget-backlight scale highlight {
+  background: linear-gradient(90deg, #b4befe, #cba6f7);
+  border-radius: 8px;
+}
+
+.widget-volume scale slider,
+.widget-backlight scale slider {
+  background: #cdd6f4;
+  border-radius: 100%;
+  min-width: 14px;
+  min-height: 14px;
+  margin: -4px;
+  box-shadow: none;
+}
+
+/* ---------- Media player (mpris) ---------- */
+.widget-mpris {
+  margin: 0 10px 10px 10px;
+}
+
+.widget-mpris .widget-mpris-player {
+  background: transparent;
+  border-radius: 14px;
+  margin: 0;
+}
+
+.widget-mpris-album-art {
+  border-radius: 14px;
+}
+
+.widget-mpris-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #cdd6f4;
+}
+
+.widget-mpris-subtitle {
+  color: #a6adc8;
+}
+
+.widget-mpris button {
+  background: transparent;
+  color: #cdd6f4;
+  border: none;
+  border-radius: 10px;
+}
+
+.widget-mpris button:hover {
+  background: rgba(69, 71, 90, 0.9);
+  color: #b4befe;
+}
+
+/* ---------- Placeholder & transparent rows ---------- */
+.control-center-list-placeholder,
+.control-center .placeholder {
+  color: #6c7086;
+}
+
+.control-center-list,
+.control-center-list viewport,
+.control-center scrolledwindow,
+.control-center scrolledwindow viewport,
+.control-center-list row,
+.control-center-list row:focus,
+.control-center-list row:selected,
+.control-center-list row:active,
+.notification-row,
+.notification-row:focus,
+.notification-row:hover,
+.notification-row:selected,
+.notification-row:active {
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}

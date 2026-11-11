@@ -1,0 +1,195 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "margin-top": 6,
+  "margin-left": 10,
+  "margin-right": 10,
+  "spacing": 0,
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "group/stats",
+    "pulseaudio",
+    "network",
+    "battery",
+    "custom/notification",
+    "custom/power"
+  ],
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "empty": "\uf10c",
+      "default": "\uf111",
+      "active": "\uf111",
+      "urgent": "\uf111"
+    },
+    "all-outputs": true,
+    "persistent-workspaces": {
+      "*": 5
+    }
+  },
+  "clock": {
+    "format": "{:%a %d %b  %H:%M}",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": {
+      "mode": "month",
+      "on-scroll": 1,
+      "format": {
+        "months": "<span color='#cdd6f4'><b>{}</b></span>",
+        "weekdays": "<span color='#b4befe'><b>{}</b></span>",
+        "days": "<span color='#a6adc8'>{}</span>",
+        "today": "<span color='#f38ba8'><b>{}</b></span>"
+      }
+    },
+    "actions": {
+      "on-scroll-up": "shift_down",
+      "on-scroll-down": "shift_up"
+    }
+  },
+  "group/stats": {
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-duration": 250,
+      "click-to-reveal": false,
+      "children-class": "stats-child"
+    },
+    "modules": [
+      "custom/stats",
+      "tray",
+      "cpu",
+      "memory",
+      "temperature",
+      "backlight",
+      "bluetooth"
+    ]
+  },
+  "custom/stats": {
+    "format": "\uf104",
+    "tooltip": false
+  },
+  "cpu": {
+    "interval": 3,
+    "format": "\uf2db",
+    "tooltip-format": "CPU: {usage}%\n{avg_frequency} GHz",
+    "on-click": "kitty -e btop"
+  },
+  "memory": {
+    "interval": 5,
+    "format": "\uefc5",
+    "tooltip-format": "RAM: {percentage}%\n{used:0.1f}G / {total:0.1f}G\nSwap: {swapUsed:0.1f}G / {swapTotal:0.1f}G",
+    "on-click": "kitty -e btop"
+  },
+  "temperature": {
+    "interval": 5,
+    "hwmon-path-abs": "/sys/devices/platform/coretemp.0/hwmon",
+    "input-filename": "temp1_input",
+    "critical-threshold": 85,
+    "format": "{icon}",
+    "tooltip-format": "Temp: {temperatureC}°C",
+    "format-icons": [
+      "\uf2cb",
+      "\uf2c9",
+      "\uf2c7"
+    ],
+    "on-click": "kitty -e btop"
+  },
+  "backlight": {
+    "format": "{icon}",
+    "tooltip-format": "Brightness: {percent}%",
+    "format-icons": [
+      "\uf186",
+      "\uf185"
+    ],
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-"
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "format-muted": "\uf026",
+    "tooltip-format": "Volume: {volume}%\n{desc}",
+    "format-icons": {
+      "default": [
+        "\uf027",
+        "\uf028"
+      ]
+    },
+    "on-click": "pavucontrol",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-scroll-up": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  },
+  "bluetooth": {
+    "format": "\udb80\udcaf",
+    "format-off": "\udb80\udcb2",
+    "format-disabled": "\udb80\udcb2",
+    "format-connected": "\udb80\udcb1",
+    "tooltip-format": "Bluetooth: on\n{controller_alias}\t{controller_address}",
+    "tooltip-format-off": "Bluetooth: off",
+    "tooltip-format-disabled": "Bluetooth: unavailable",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+    "on-click": "~/.local/bin/wofi-menus bluetooth",
+    "on-click-right": "if bluetoothctl show | grep -q 'Powered: yes'; then bluetoothctl power off; else bluetoothctl power on; fi"
+  },
+  "network": {
+    "format-wifi": "\uf1eb",
+    "format-ethernet": "\uf6ff",
+    "format-disconnected": "\uf071",
+    "format-disabled": "\udb81\uddaa",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
+    "tooltip-format-ethernet": "{ifname}: {ipaddr}",
+    "tooltip-format-disconnected": "Wi-Fi on, not connected",
+    "tooltip-format-disabled": "Wi-Fi: off",
+    "on-click": "~/.local/bin/wofi-menus wifi",
+    "on-click-right": "if [ \"$(nmcli radio wifi)\" = enabled ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"
+  },
+  "battery": {
+    "interval": 10,
+    "states": {
+      "warning": 25,
+      "critical": 12
+    },
+    "tooltip-format": "{capacity}%\n{timeTo}",
+    "format": "{icon}",
+    "format-charging": "\uf0e7",
+    "format-plugged": "\uf1e6",
+    "format-icons": [
+      "\uf244",
+      "\uf243",
+      "\uf242",
+      "\uf241",
+      "\uf240"
+    ]
+  },
+  "custom/notification": {
+    "tooltip": false,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "<span foreground='#f38ba8'>\uf0f3</span>",
+      "none": "\uf0f3",
+      "dnd-notification": "<span foreground='#f38ba8'>\uf1f6</span>",
+      "dnd-none": "\uf1f6"
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
+  "custom/power": {
+    "format": "\uf011",
+    "tooltip": false,
+    "on-click": "~/.local/bin/wofi-menus power"
+  },
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8
+  }
+}

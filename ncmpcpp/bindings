@@ -1,0 +1,87 @@
+##### movement #####
+def_key "j"
+  scroll_down
+def_key "k"
+  scroll_up
+def_key "ctrl-d"
+  page_down
+def_key "ctrl-u"
+  page_up
+def_key "g"
+  move_home
+def_key "G"
+  move_end
+def_key "]"
+  scroll_down_album
+def_key "["
+  scroll_up_album
+def_key "}"
+  scroll_down_artist
+def_key "{"
+  scroll_up_artist
+
+##### h / l = left / right / back / enter #####
+def_key "h"
+  previous_column
+def_key "h"
+  master_screen
+def_key "h"
+  jump_to_parent_directory
+def_key "l"
+  next_column
+def_key "l"
+  slave_screen
+def_key "l"
+  enter_directory
+
+##### switch screens #####
+def_key "H"
+  previous_screen
+def_key "L"
+  next_screen
+
+##### search (vim style) #####
+def_key "/"
+  find
+def_key "/"
+  find_item_forward
+def_key "?"
+  find
+def_key "?"
+  find_item_backward
+def_key "n"
+  next_found_item
+def_key "N"
+  previous_found_item
+
+##### editing #####
+def_key "d"
+  delete_playlist_items
+def_key "d"
+  delete_browser_items
+def_key "d"
+  delete_stored_playlist
+def_key "J"
+  move_sort_order_down
+def_key "J"
+  move_selected_items_down
+def_key "K"
+  move_sort_order_up
+def_key "K"
+  move_selected_items_up
+
+##### keys moved to make room #####
+def_key "ctrl-g"
+  jump_to_position_in_song
+def_key "alt-g"
+  jump_to_browser
+def_key "alt-g"
+  jump_to_playlist_editor
+def_key "ctrl-y"
+  show_lyrics
+
+##### :q / :wq style commands (press : then type) #####
+def_command "q" [deferred]
+  quit
+def_command "wq" [deferred]
+  quit

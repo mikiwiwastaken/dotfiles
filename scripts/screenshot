@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+dir="$HOME/Pictures/Screenshots"
+mkdir -p "$dir"
+file="$dir/$(date +%F_%H-%M-%S).png"
+
+# Print "x,y WxH" for every visible window on the active workspaces (Hyprland).
+pick_window() {
+  local ws
+  ws=$(hyprctl monitors -j | jq -c '[.[].activeWorkspace.id]')
+  hyprctl clients -j | jq -r --argjson ws "$ws" '
+    .[]
+    | select(.mapped and (.hidden | not))
+    | select(.workspace.id as $w | $ws | index($w))
+    | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"
+  ' | slurp -r -d   # click a window to select it, Esc cancels
+}
+
+case "$1" in
+  region)
+    area=$(slurp -d) || exit 0   # Esc cancels
+    grim -g "$area" "$file" || exit 1
+    ;;
+  window)
+    area=$(pick_window) || exit 0
+    grim -g "$area" "$file" || exit 1
+    ;;
+  full)
+    grim "$file" || exit 1
+    ;;
+  *)
+    echo "usage: screenshot region|window|full"
+    exit 1
+    ;;
+esac
+
+wl-copy < "$file"
+notify-send -i "$file" "Screenshot saved" "$file"

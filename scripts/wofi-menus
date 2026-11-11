@@ -1,0 +1,204 @@
+#!/usr/bin/env bash
+# wofi-menus: power | wifi | bluetooth | emoji | windows | calc
+# Deps (Hyprland): wofi, hyprlock, libnotify, wl-clipboard, jq, networkmanager (nmcli), bluez-utils (bluetoothctl)
+# Optional: libqalculate (qalc) for the calculator, otherwise falls back to bc
+set -u
+
+menu()      { wofi --dmenu --insensitive "$@"; }
+notify()    { notify-send -a wofi-menus "$@"; }
+
+# ---------------------------------------------------------------- power
+power() {
+  local choice
+  choice=$(printf '%s\n' \
+    $'\uf023  Lock' $'\uf2f5  Logout' $'\uf186  Suspend' $'\uf021  Reboot' $'\uf011  Shutdown' \
+    | menu -p "Power" -W 320 -H 248) || return
+
+  case "$choice" in
+    *Lock)     hyprlock ;;
+    *Logout)   hyprctl dispatch 'hl.dsp.exit()' ;;
+    *Suspend)  systemctl suspend ;;
+    *Reboot)   systemctl reboot ;;
+    *Shutdown) systemctl poweroff ;;
+  esac
+}
+
+# ---------------------------------------------------------------- wifi
+wifi() {
+  local state toggle list choice
+  state=$(nmcli -t -f WIFI g)
+
+  if [[ $state != enabled ]]; then
+    choice=$(printf 'Turn Wi-Fi on\n' | menu -p "Wi-Fi" -W 360 -H 120) || return
+    nmcli radio wifi on
+    return
+  fi
+
+  declare -A ssid_of sec_of
+  list=$'Turn Wi-Fi off\nRescan'
+
+  local use sig sec ssid mark label
+  declare -A seen
+  while IFS=: read -r use sig sec ssid; do
+    [[ -z $ssid || -n ${seen[$ssid]:-} ]] && continue
+    seen[$ssid]=1
+    mark="  "; [[ $use == '*' ]] && mark="● "
+    label="${mark}${ssid}  ${sig}%"
+    [[ -n $sec && $sec != "--" ]] && label+=$'  \uf023'
+    ssid_of[$label]=$ssid
+    sec_of[$label]=$sec
+    list+=$'\n'"$label"
+  done < <(nmcli -t -e no -f IN-USE,SIGNAL,SECURITY,SSID dev wifi list --rescan no | sort -t: -k2 -nr)
+
+  choice=$(printf '%s\n' "$list" | menu -p "Wi-Fi" -W 440 -H 420) || return
+
+  case "$choice" in
+    "Turn Wi-Fi off") nmcli radio wifi off; return ;;
+    "Rescan")         notify "Wi-Fi" "Scanning…"; nmcli dev wifi rescan 2>/dev/null; sleep 3; wifi; return ;;
+  esac
+
+  ssid=${ssid_of[$choice]:-}
+  [[ -z $ssid ]] && return
+
+  # Saved networks (or open ones) connect without a password
+  if nmcli -w 15 dev wifi connect "$ssid" >/dev/null 2>&1; then
+    notify "Wi-Fi" "Connected to $ssid"
+    return
+  fi
+
+  local sec_type=${sec_of[$choice]:-}
+  if [[ -n $sec_type && $sec_type != "--" ]]; then
+    local pw
+    pw=$(printf '' | menu --password -p "Password for $ssid" -W 400 -H 120) || return
+    if nmcli -w 20 dev wifi connect "$ssid" password "$pw" >/dev/null 2>&1; then
+      notify "Wi-Fi" "Connected to $ssid"
+    else
+      notify "Wi-Fi" "Could not connect to $ssid"
+    fi
+  else
+    notify "Wi-Fi" "Could not connect to $ssid"
+  fi
+}
+
+# ---------------------------------------------------------------- bluetooth
+bluetooth() {
+  local powered choice list mac name mark label
+  powered=$(bluetoothctl show | awk '/Powered:/ {print $2}')
+
+  if [[ $powered != yes ]]; then
+    choice=$(printf 'Turn Bluetooth on\n' | menu -p "Bluetooth" -W 360 -H 120) || return
+    bluetoothctl power on >/dev/null
+    return
+  fi
+
+  declare -A mac_of
+  list=$'Turn Bluetooth off\nScan for devices (6s)'
+
+  while read -r _ mac name; do
+    [[ -z $mac ]] && continue
+    mark="  "
+    bluetoothctl info "$mac" | grep -q 'Connected: yes' && mark="● "
+    label="${mark}${name}"
+    mac_of[$label]=$mac
+    list+=$'\n'"$label"
+  done < <(bluetoothctl devices)
+
+  choice=$(printf '%s\n' "$list" | menu -p "Bluetooth" -W 440 -H 380) || return
+
+  case "$choice" in
+    "Turn Bluetooth off")       bluetoothctl power off >/dev/null; return ;;
+    "Scan for devices (6s)")    notify "Bluetooth" "Scanning…"
+                                bluetoothctl --timeout 6 scan on >/dev/null 2>&1
+                                bluetooth; return ;;
+  esac
+
+  mac=${mac_of[$choice]:-}
+  [[ -z $mac ]] && return
+  name=${choice#??}
+
+  if bluetoothctl info "$mac" | grep -q 'Connected: yes'; then
+    bluetoothctl disconnect "$mac" >/dev/null 2>&1
+    notify "Bluetooth" "Disconnected from $name"
+  else
+    if ! bluetoothctl info "$mac" | grep -q 'Paired: yes'; then
+      bluetoothctl pair "$mac" >/dev/null 2>&1
+      bluetoothctl trust "$mac" >/dev/null 2>&1
+    fi
+    if [[ $(bluetoothctl --timeout 15 connect "$mac" 2>&1) == *"Connection successful"* ]]; then
+      notify "Bluetooth" "Connected to $name"
+    else
+      notify "Bluetooth" "Could not connect to $name"
+    fi
+  fi
+}
+
+# ---------------------------------------------------------------- emoji
+emoji() {
+  local f="${XDG_CACHE_HOME:-$HOME/.cache}/wofi-emoji.txt" choice
+  if [[ ! -s $f ]]; then
+    notify "Emoji" "Downloading emoji list (one time only)…"
+    mkdir -p "$(dirname "$f")"
+    curl -fsSL https://unicode.org/Public/emoji/latest/emoji-test.txt \
+      | grep '; fully-qualified' \
+      | sed -E 's/.*# ([^ ]+) E[0-9.]+ (.*)/\1  \2/' > "$f"
+    if [[ ! -s $f ]]; then
+      rm -f "$f"; notify "Emoji" "Download failed"; return 1
+    fi
+  fi
+  choice=$(menu -p "Emoji" -W 520 -H 420 < "$f") || return
+  printf '%s' "${choice%% *}" | wl-copy
+  notify "Emoji" "Copied ${choice%% *}"
+}
+
+# ---------------------------------------------------------------- windows
+windows() {
+  local rows choice id
+  rows=$(hyprctl clients -j | jq -r '.[] | select(.mapped) | "\(.address)\t\(.class)  -  \(.title)"')
+  [[ -z $rows ]] && return
+
+  choice=$(printf '%s\n' "$rows" | cut -f2- | menu -p "Windows" -W 640 -H 360) || return
+  id=$(printf '%s\n' "$rows" | awk -F'\t' -v c="$choice" '$2 == c {print $1; exit}')
+  [[ -z $id ]] && return
+
+  # Hyprland 0.55+: `hyprctl dispatch` takes a Lua expression, not "name args"
+  hyprctl dispatch "hl.dsp.focus({ window = \"address:$id\" })" >/dev/null
+}
+
+# ---------------------------------------------------------------- calculator
+calc_eval() {
+  if command -v qalc >/dev/null; then
+    qalc -t "$1" | tail -n1
+  else
+    printf 'scale=6; %s\n' "$1" | bc -l 2>/dev/null \
+      | sed -E 's/(\.[0-9]*[1-9])0+$/\1/; s/\.0+$//'
+  fi
+}
+
+calc() {
+  local prev="" expr res
+  while true; do
+    expr=$(printf '%s' "$prev" | menu --exec-search --matching contains -p "Calc" -W 420 -H 120) || return
+    [[ -z $expr ]] && return
+    if [[ $expr == "= "* ]]; then
+      printf '%s' "${expr#= }" | wl-copy
+      notify "Calculator" "Copied ${expr#= }"
+      return
+    fi
+    res=$(calc_eval "$expr")
+    prev="= ${res:-error}"
+  done
+}
+
+# ---------------------------------------------------------------- main
+# Pressing the keybind again while a menu is open closes it
+if pgrep -x wofi >/dev/null; then pkill -x wofi; exit 0; fi
+
+case "${1:-}" in
+  power)         power ;;
+  wifi)          wifi ;;
+  bluetooth|bt)  bluetooth ;;
+  emoji)         emoji ;;
+  windows|win)   windows ;;
+  calc)          calc ;;
+  *) echo "usage: ${0##*/} {power|wifi|bluetooth|emoji|windows|calc}" >&2; exit 1 ;;
+esac

@@ -1,0 +1,153 @@
+* {
+  font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  min-height: 0;
+}
+
+window#waybar {
+  background: rgba(30, 30, 46, 0.9);
+  color: #cdd6f4;
+  border-radius: 14px;
+  border: 1px solid rgba(180, 190, 254, 0.18);
+}
+
+#workspaces,
+#clock,
+#tray,
+#custom-stats,
+#cpu,
+#memory,
+#temperature,
+#backlight,
+#pulseaudio,
+#bluetooth,
+#network,
+#battery,
+#custom-notification,
+#custom-power {
+  background: transparent;
+  color: #cdd6f4;
+  padding: 0 10px;
+  margin: 0;
+}
+
+#workspaces {
+  padding: 0 6px;
+}
+
+#workspaces button {
+  padding: 0 6px;
+  margin: 5px 1px;
+  font-size: 11px;
+  color: #6c7086;
+  background: transparent;
+  border-radius: 10px;
+  transition: all 0.12s ease-out;
+}
+
+#workspaces button.empty {
+  color: #45475a;
+}
+
+#workspaces button:hover {
+  background: rgba(205, 214, 244, 0.1);
+  color: #cdd6f4;
+}
+
+#workspaces button.active {
+  color: #b4befe;
+}
+
+#workspaces button.urgent {
+  color: #f38ba8;
+}
+
+#custom-power {
+  padding: 0 16px 0 10px;
+}
+
+#custom-power:hover {
+  color: #f38ba8;
+}
+
+#temperature.critical {
+  color: #f38ba8;
+}
+
+#pulseaudio.muted,
+#bluetooth.off,
+#bluetooth.disabled {
+  color: #6c7086;
+}
+
+#network.disabled,
+#network.disconnected {
+  color: #f38ba8;
+}
+
+#battery.warning:not(.charging) {
+  color: #f9e2af;
+}
+
+#battery.critical:not(.charging) {
+  color: #f38ba8;
+  animation: blink 0.8s steps(2) infinite;
+}
+
+@keyframes blink {
+  to {
+    color: #cdd6f4;
+  }
+}
+
+tooltip decoration {
+  border-radius: 10px;
+}
+
+tooltip {
+  background: rgba(30, 30, 46, 0.85);
+  border: 1px solid #b4befe;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+tooltip * {
+  background: transparent;
+}
+
+tooltip label {
+  color: #cdd6f4;
+}
+
+/* Tray right-click menus */
+menu {
+  background: rgba(30, 30, 46, 0.6);
+  color: #cdd6f4;
+  border: 1px solid rgba(180, 190, 254, 0.18);
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: none;
+}
+
+menu menuitem {
+  background: transparent;
+  color: #cdd6f4;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+menu menuitem:hover {
+  background: rgba(205, 214, 244, 0.1);
+}
+
+menu separator {
+  background: rgba(180, 190, 254, 0.18);
+  min-height: 1px;
+}
+
+menu decoration,
+window.popup decoration {
+  box-shadow: none;
+}

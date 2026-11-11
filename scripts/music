@@ -1,0 +1,204 @@
+#!/bin/bash
+# MPRIS helper for hyprlock (uses playerctl).
+# Usage: music.sh --title | --artist | --album | --arturl | --status | --time
+
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/hyprlock-music"
+mkdir -p "$CACHE_DIR"
+
+if [ $# -eq 0 ]; then
+	echo "Usage: $0 --title | --artist | --album | --arturl | --status | --time"
+	exit 1
+fi
+
+# Pick the player that is actually playing (else the first paused one).
+# Without this, playerctl may talk to a stopped player and report
+# position 0 and no status.
+pick_player() {
+	local p paused=""
+	while read -r p; do
+		[ -z "$p" ] && continue
+		case $(playerctl -p "$p" status 2>/dev/null) in
+		Playing)
+			echo "$p"
+			return
+			;;
+		Paused) [ -z "$paused" ] && paused=$p ;;
+		esac
+	done < <(playerctl -l 2>/dev/null)
+	echo "$paused"
+}
+
+PLAYER=$(pick_player)
+
+# playerctl wrapper bound to the chosen player
+pc() {
+	if [ -n "$PLAYER" ]; then
+		playerctl -p "$PLAYER" "$@" 2>/dev/null
+	else
+		playerctl "$@" 2>/dev/null
+	fi
+}
+
+meta() {
+	pc metadata --format "$1"
+}
+
+# Print the text, or a single space when empty.
+# An empty output makes hyprlock show its "Sample Text" placeholder.
+out() {
+	if [ -n "$1" ]; then
+		printf '%s\n' "$1"
+	else
+		printf ' \n'
+	fi
+}
+
+# Shorten to $2 characters and add an ellipsis.
+trunc() {
+	local s=$1 max=$2
+	if [ "${#s}" -gt "$max" ]; then
+		printf '%s…' "${s:0:max-1}"
+	else
+		printf '%s' "$s"
+	fi
+}
+
+# hyprlock labels parse Pango markup, so escape & < >
+esc() {
+	printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
+}
+
+# Seconds -> m:ss
+fmt() {
+	printf '%d:%02d' $(($1 / 60)) $(($1 % 60))
+}
+
+# Return a local image path for the current album art (original aspect ratio).
+# hyprlock only reads local png/jpg/webp, so remote URLs are cached first.
+art_raw() {
+	local url path base tmp ext f
+	url=$(meta '{{ mpris:artUrl }}')
+	[ -z "$url" ] && return
+
+	case "$url" in
+	file://*)
+		path=${url#file://}
+		# Decode %XX sequences such as %20
+		printf '%b\n' "${path//%/\\x}"
+		;;
+	http://* | https://*)
+		base="$CACHE_DIR/$(printf '%s' "$url" | md5sum | cut -d' ' -f1)"
+		for f in "$base".jpg "$base".png "$base".webp; do
+			if [ -s "$f" ]; then
+				echo "$f"
+				return
+			fi
+		done
+		tmp=$(mktemp "$CACHE_DIR/dl.XXXXXX")
+		if curl -fsSL --max-time 5 -o "$tmp" "$url" 2>/dev/null; then
+			case $(file -b --mime-type "$tmp") in
+			image/png) ext=png ;;
+			image/webp) ext=webp ;;
+			*) ext=jpg ;;
+			esac
+			mv "$tmp" "$base.$ext"
+			echo "$base.$ext"
+			# Drop cached art older than 7 days
+			find "$CACHE_DIR" -type f -mtime +7 -delete 2>/dev/null
+		else
+			rm -f "$tmp"
+		fi
+		;;
+	*)
+		echo "$url"
+		;;
+	esac
+}
+
+# Center-crop an image to a 1:1 square and cache the result.
+# Non-square covers (e.g. 16:9 video thumbnails) would otherwise be
+# stretched or overflow the square image widget in hyprlock.
+SQUARE_SIZE=300
+
+square() {
+	local src=$1 key out tmp
+	[ -f "$src" ] || return 1
+
+	# Key on path + mtime + size so a reused filename with new art is re-cropped
+	key=$(printf '%s' "$src$(stat -c '%Y%s' "$src" 2>/dev/null)" | md5sum | cut -d' ' -f1)
+	out="$CACHE_DIR/sq-$key.png"
+	if [ -s "$out" ]; then
+		echo "$out"
+		return 0
+	fi
+
+	tmp=$(mktemp "$CACHE_DIR/sq.XXXXXX.png")
+	if command -v magick >/dev/null 2>&1; then
+		magick "$src[0]" -resize "${SQUARE_SIZE}x${SQUARE_SIZE}^" \
+			-gravity center -extent "${SQUARE_SIZE}x${SQUARE_SIZE}" +repage "$tmp" 2>/dev/null
+	elif command -v convert >/dev/null 2>&1; then
+		convert "$src[0]" -resize "${SQUARE_SIZE}x${SQUARE_SIZE}^" \
+			-gravity center -extent "${SQUARE_SIZE}x${SQUARE_SIZE}" +repage "$tmp" 2>/dev/null
+	elif command -v ffmpeg >/dev/null 2>&1; then
+		ffmpeg -v error -y -i "$src" \
+			-vf "crop='min(iw,ih)':'min(iw,ih)',scale=${SQUARE_SIZE}:${SQUARE_SIZE}" \
+			-frames:v 1 "$tmp" 2>/dev/null
+	fi
+
+	if [ -s "$tmp" ]; then
+		mv "$tmp" "$out"
+		echo "$out"
+		# Drop cropped art older than 7 days
+		find "$CACHE_DIR" -type f -name 'sq-*.png' -mtime +7 -delete 2>/dev/null
+	else
+		# No converter available or conversion failed: fall back to the original
+		rm -f "$tmp"
+		echo "$src"
+	fi
+}
+
+art_url() {
+	local raw
+	raw=$(art_raw)
+	[ -z "$raw" ] && return
+	square "$raw"
+}
+
+case "$1" in
+--title)
+	out "$(esc "$(trunc "$(meta '{{ xesam:title }}')" 24)")"
+	;;
+--artist)
+	out "$(esc "$(trunc "$(meta '{{ xesam:artist }}')" 28)")"
+	;;
+--album)
+	out "$(esc "$(trunc "$(meta '{{ xesam:album }}')" 36)")"
+	;;
+--arturl)
+	art_url
+	;;
+--status)
+	case "$(pc status)" in
+	Playing) echo "" ;;
+	Paused) echo "" ;;
+	*) echo " " ;;
+	esac
+	;;
+--time)
+	pos=$(pc position)
+	len=$(meta '{{ mpris:length }}')
+	pos=${pos%.*}
+	if ! [[ "$pos" =~ ^[0-9]+$ ]]; then
+		out ""
+	elif [[ "$len" =~ ^[0-9]+$ ]] && [ "$len" -gt 0 ]; then
+		out "$(fmt "$pos") / $(fmt $((len / 1000000)))"
+	else
+		# Streams often report no length
+		out "$(fmt "$pos")"
+	fi
+	;;
+*)
+	echo "Invalid option: $1"
+	exit 1
+	;;
+esac

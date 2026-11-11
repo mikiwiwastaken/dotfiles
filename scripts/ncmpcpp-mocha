@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Optional: launch ncmpcpp with the *exact* Catppuccin Mocha hex values.
+# Overrides 16 xterm-256 palette slots via OSC 4 and restores them on exit.
+# The config is already readable without this; this just makes the colors exact.
+# Works in kitty, foot, alacritty, wezterm, ghostty, xterm, etc.
+# So we run ncmpcpp with a private copy of your terminfo entry that has no `oc`.
+
+declare -A MOCHA=(
+  [183]=cba6f7 # mauve
+  [218]=f5c2e7 # pink
+  [211]=f38ba8 # red
+  [216]=fab387 # peach
+  [223]=f9e2af # yellow
+  [151]=a6e3a1 # green
+  [116]=94e2d5 # teal
+  [117]=89dceb # sky
+  [111]=89b4fa # blue
+  [147]=b4befe # lavender
+  [189]=cdd6f4 # text
+  [146]=a6adc8 # subtext0
+  [103]=6c7086 # overlay0
+  [238]=45475a # surface1
+  [236]=313244 # surface0
+  [234]=1e1e2e # base
+)
+
+set_palette() {
+  local i
+  for i in "${!MOCHA[@]}"; do
+    printf '\e]4;%d;#%s\e\\' "$i" "${MOCHA[$i]}"
+  done
+}
+
+reset_palette() {
+  local slots
+  slots=$(IFS=';'; echo "${!MOCHA[*]}")
+  printf '\e]104;%s\e\\' "$slots"
+}
+
+# Build a copy of the current terminfo entry without `oc`, if tic is available.
+setup_terminfo() {
+  command -v tic >/dev/null 2>&1 || return 0
+  local dir="${XDG_CACHE_HOME:-$HOME/.cache}/ncmpcpp-mocha/terminfo"
+  local name="${TERM}-nooc"
+  mkdir -p "$dir" || return 0
+  printf '%s|%s without palette reset,\n\toc@,\n\tuse=%s,\n' "$name" "$TERM" "$TERM" \
+    | tic -x -o "$dir" - 2>/dev/null || return 0
+  export TERMINFO="$dir"
+  export TERM="$name"
+}
+
+trap reset_palette EXIT
+trap 'exit 130' INT TERM
+
+setup_terminfo
+set_palette
+ncmpcpp "$@"

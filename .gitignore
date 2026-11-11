@@ -1,0 +1,40 @@
+# Ignore everything at the top level by default
+/*
+
+# Track only what we explicitly allow
+!/.gitignore
+!/README.md
+!/LICENSE
+!/install.sh
+!/hypr/
+/hypr/hyprsettings.lua
+!/waybar/
+!/wofi/
+!/swaync/
+!/swayosd/
+!/kitty/
+!/zsh/
+!/starship.toml
+!/eza/
+!/bat/
+!/btop/
+!/fastfetch/
+!/cava/
+!/yazi/
+!/imv/
+!/zathura/
+!/mpv/
+!/mpd/
+/mpd/*
+!/mpd/mpd.conf
+!/ncmpcpp/
+!/scripts/
+!/Kvantum/
+!/qt5ct/
+!/qt6ct/
+!/gtk-3.0/
+
+# Junk inside tracked folders
+*.log
+*.bak
+*~

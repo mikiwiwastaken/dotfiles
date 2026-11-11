@@ -1,0 +1,45 @@
+#!/bin/bash
+# Keeps the hyprlock now-playing card in sync without polling.
+#  - On every track change: pre-cache the album art, then ask hyprlock to
+#    refresh (SIGUSR2). Needs `reload_time = 0` on the image and
+#    `update:1000:1` on the labels in hyprlock.conf.
+#  - When hyprlock starts: send one refresh so the card is filled at once.
+#
+# NEVER send SIGUSR1 here: it unlocks hyprlock.
+#
+# Autostart it once per session (same place you start swaync/hyprpaper).
+
+MUSIC="$HOME/.config/hypr/music.sh"
+
+refresh() {
+	pgrep -x hyprlock >/dev/null || return
+	"$MUSIC" --arturl >/dev/null 2>&1 # download/cache art first
+	pkill -USR2 -x hyprlock
+}
+
+# Refresh once right after hyprlock starts
+(
+	was_running=0
+	while sleep 1; do
+		if pgrep -x hyprlock >/dev/null; then
+			if [ "$was_running" -eq 0 ]; then
+				was_running=1
+				sleep 0.3
+				refresh
+			fi
+		else
+			was_running=0
+		fi
+	done
+) &
+
+# Refresh on every metadata / status change (event-driven, no polling).
+# The outer loop restarts playerctl if it ever exits.
+while true; do
+	playerctl --follow metadata \
+		--format '{{ playerName }}|{{ mpris:artUrl }}|{{ xesam:title }}|{{ status }}' \
+		2>/dev/null | while read -r _; do
+		refresh
+	done
+	sleep 2
+done

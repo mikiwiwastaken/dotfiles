@@ -1,0 +1,14 @@
+show=drun
+width=520
+height=380
+location=center
+prompt=Search apps...
+layer=overlay
+columns=1
+allow_images=true
+image_size=28
+insensitive=true
+matching=multi-contains
+no_actions=true
+hide_scroll=true
+term=kitty

@@ -1,0 +1,17 @@
+include catppuccin-mocha
+
+# Open document in best-fit mode by default
+set adjust-open "best-fit"
+
+# Enable clipboard selection (copies selected text to system clipboard)
+set selection-clipboard clipboard
+
+# Database backend
+set database sqlite
+
+# Page number offset (adjusts page numbers to match printed book indices)
+# set offset 0
+
+# Custom keybindings (Vim-like controls are default)
+map [normal] f toggle_fullscreen
+map [fullscreen] f toggle_fullscreen

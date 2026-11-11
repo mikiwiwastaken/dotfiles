@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Toggle screen recording. Usage: record region|window|full
+# Run it again (keybind or control center button) while recording to stop.
+dir="$HOME/Videos/Recordings"
+mkdir -p "$dir"
+
+# Already recording? SIGINT lets wf-recorder finalize the file properly.
+if pgrep -x wf-recorder >/dev/null; then
+  pkill -INT -x wf-recorder
+  exit 0
+fi
+
+file="$dir/$(date +%F_%H-%M-%S).mp4"
+
+# Print "x,y WxH" for every visible window on the active workspaces (Hyprland).
+pick_window() {
+  local ws
+  ws=$(hyprctl monitors -j | jq -c '[.[].activeWorkspace.id]')
+  hyprctl clients -j | jq -r --argjson ws "$ws" '
+    .[]
+    | select(.mapped and (.hidden | not))
+    | select(.workspace.id as $w | $ws | index($w))
+    | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"
+  ' | slurp -r -d   # click a window to select it, Esc cancels
+}
+
+case "$1" in
+  region)
+    area=$(slurp -d) || exit 0     # Esc cancels
+    args=(-g "$area")
+    ;;
+  window)
+    area=$(pick_window) || exit 0
+    args=(-g "$area")
+    ;;
+  full)
+    args=()
+    ;;
+  *)
+    echo "usage: record region|window|full"
+    exit 1
+    ;;
+esac
+
+# Find the default audio monitor (system audio output)
+audio_source=$(pactl get-default-sink).monitor
+
+notify-send "Recording started" "Run the same command again to stop"
+
+if wf-recorder \
+  "${args[@]}" \
+  -c h264_vaapi \
+  -d /dev/dri/renderD128 \
+  --audio="$audio_source" \
+  -f "$file"; then
+  notify-send "Recording saved" "$file"
+else
+  # Do not claim success when wf-recorder failed (bad codec/device, etc.); keep any file
+  notify-send -u critical "Recording failed" "wf-recorder exited with an error"
+fi
