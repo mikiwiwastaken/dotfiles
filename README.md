@@ -73,7 +73,7 @@ When it finishes, log out and start Hyprland using `start-hyprland` or by select
 ```bash
 sudo pacman -Syu --needed \
   git hyprland xdg-desktop-portal-hyprland hyprpolkitagent \
-  wofi swaync swayosd hyprpaper archlinux-wallpaper hyprlock hypridle \
+  waybar wofi swaync swayosd hyprpaper archlinux-wallpaper hyprlock hypridle \
   grim slurp wf-recorder wl-clipboard cliphist \
   pavucontrol hyprpicker hyprsunset gvfs libqalculate \
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme \
@@ -88,7 +88,7 @@ sudo pacman -Syu --needed \
 AUR packages (requires an AUR helper such as `yay`):
 
 ```bash
-yay -S --needed catppuccin-gtk-theme-mocha catppuccin-cursors-mocha waybar-git
+yay -S --needed catppuccin-gtk-theme-mocha catppuccin-cursors-mocha
 ```
 
 #### 2. GTK theme

@@ -22,7 +22,7 @@ CONFIG_DIR="$HOME/.config"
 
 PACMAN_PACKAGES=(
   git hyprland xdg-desktop-portal-hyprland hyprpolkitagent
-  wofi swaync swayosd hyprpaper archlinux-wallpaper hyprlock hypridle
+  waybar wofi swaync swayosd hyprpaper archlinux-wallpaper hyprlock hypridle
   grim slurp wf-recorder wl-clipboard cliphist
   pavucontrol hyprpicker hyprsunset gvfs libqalculate
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme
@@ -37,7 +37,6 @@ PACMAN_PACKAGES=(
 AUR_PACKAGES=(
   catppuccin-gtk-theme-mocha
   catppuccin-cursors-mocha
-  waybar-git
 )
 
 NOCONFIRM=()
