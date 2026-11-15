@@ -1,3 +1,6 @@
+export EDITOR="nvim"
+export VISUAL="nvim"
+
 # History
 HISTFILE=~/.zsh_history
 HISTSIZE=10000

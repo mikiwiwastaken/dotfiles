@@ -1,0 +1,21 @@
+local o = vim.opt
+
+o.number = true
+o.relativenumber = true
+o.expandtab = true -- use spaces instead of tabs
+o.shiftwidth = 2
+o.tabstop = 2
+o.smartindent = true
+o.ignorecase = true
+o.smartcase = true -- case-sensitive only if uppercase is used
+o.termguicolors = true
+o.signcolumn = "yes"
+o.cursorline = true
+o.scrolloff = 8
+o.splitright = true
+o.splitbelow = true
+o.undofile = true -- persistent undo
+o.clipboard = "unnamedplus"
+o.updatetime = 250
+o.backup = false
+o.swapfile = false

@@ -28,6 +28,7 @@ PACMAN_PACKAGES=(
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme
   ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji noto-fonts-cjk
   kitty zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions
+  neovim unzip tree-sitter-cli
   starship eza bat ripgrep fd fzf zoxide ncdu
   btop fastfetch cava mpd ncmpcpp
   yazi ffmpeg 7zip jq poppler resvg
