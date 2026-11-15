@@ -37,31 +37,21 @@ Pick one of the two methods below. Both give the same result.
 
 The `install.sh` script runs every step of the manual installation for you. It needs a working Arch Linux install with `sudo` and an internet connection. Do not run it as root.
 
-Download it, read it, then run it:
+Run the installer:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh
-less install.sh
-bash install.sh
+curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh | bash
 ```
-
-Options:
-
-| Flag     | Effect                                         |
-| -------- | ---------------------------------------------- |
-| `--yes`  | Pass `--noconfirm` to pacman, yay and makepkg. |
-| `--help` | Show the usage text.                           |
 
 The script:
 
 1. Installs the official packages with `pacman`.
 2. Installs the AUR packages. If no AUR helper (`yay` or `paru`) is found, it builds `yay-bin` first.
 3. Applies the GTK theme with `gsettings`.
-4. Clones this repo into `~/.config`. An existing `~/.config` is copied to `~/.config-backup-<timestamp>` first. If the repo is already there, it runs `git pull --ff-only` instead.
-5. Creates the symlinks that live outside `~/.config`.
-6. Enables and starts the `mpd` user service.
+4. Clones this repo as a bare repository into `~/.dotfiles` and checks its files out directly into your home directory. Existing `~/.config`, `~/.local/bin` and `~/.zshrc` are backed up to `~/.dotfiles-backup-<timestamp>` first. If the bare repository is already there, it updates it with `git pull --ff-only`.
+5. Enables and starts the `mpd` user service.
 
-It is safe to run again: packages are installed with `--needed` and the symlinks are overwritten.
+It is safe to run again: packages are installed with `--needed`; dotfiles updates use a fast-forward-only pull and preserve local changes.
 
 > [!NOTE]
 > If the GTK theme step fails (for example when running from a plain TTY with no D-Bus session), the script prints the `gsettings` commands. Run them again from inside your Hyprland session.
@@ -104,28 +94,18 @@ gsettings set org.gnome.desktop.interface cursor-theme 'catppuccin-mocha-dark-cu
 
 #### 3. Dotfiles
 
-Back up any existing config first, then clone the repo into `~/.config`:
+Back up any existing `~/.config`, `~/.local/bin` and `~/.zshrc` files first. Clone the repo as a bare repository outside the config directory, then check its files out into your home directory:
 
 ```bash
-cd ~/.config
-git init -b main
-git remote add origin https://github.com/mikiwiwastaken/dotfiles.git
-git fetch origin
-git checkout -f -B main origin/main
-git branch --set-upstream-to=origin/main main
+git clone --bare https://github.com/mikiwiwastaken/dotfiles.git ~/.dotfiles
+git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout -f -B main main
+git --git-dir="$HOME/.dotfiles" config --local status.showUntrackedFiles no
 ```
 
-Create the symlinks that live outside `~/.config`:
+To update the dotfiles later:
 
 ```bash
-mkdir -p ~/.local/bin
-chmod +x ~/.config/scripts/*
-ln -sf ~/.config/scripts/screenshot ~/.local/bin/screenshot
-ln -sf ~/.config/scripts/record ~/.local/bin/record
-ln -sf ~/.config/scripts/music ~/.local/bin/music
-ln -sf ~/.config/scripts/music-watch ~/.local/bin/music-watch
-ln -sf ~/.config/scripts/ncmpcpp-mocha ~/.local/bin/ncmpcpp-mocha
-ln -sf ~/.config/zsh/.zshrc ~/.zshrc
+git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" pull --ff-only origin main
 ```
 
 #### 4. Start the mpd service

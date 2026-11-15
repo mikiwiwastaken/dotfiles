@@ -6,19 +6,18 @@
 #   1. Installs the official packages with pacman
 #   2. Installs the AUR packages (bootstraps yay if no AUR helper is found)
 #   3. Applies the GTK theme with gsettings
-#   4. Clones the dotfiles into ~/.config (existing config is backed up first)
-#   5. Creates the symlinks that live outside ~/.config
-#   6. Enables and starts the mpd user service
+#   4. Checks out the dotfiles into $HOME from a bare repo in ~/.dotfiles
+#   5. Enables and starts the mpd user service
 #
 # Usage:
 #   ./install.sh                  # interactive, pacman asks for confirmation
-#   ./install.sh --yes            # pass --noconfirm to pacman, yay and makepkg
+#   curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh | bash
 
 set -euo pipefail
 
 REPO_URL="${DOTFILES_REPO:-https://github.com/mikiwiwastaken/dotfiles.git}"
 BRANCH="main"
-CONFIG_DIR="$HOME/.config"
+DOTFILES_DIR="$HOME/.dotfiles"
 
 PACMAN_PACKAGES=(
   git hyprland xdg-desktop-portal-hyprland hyprpolkitagent
@@ -40,7 +39,6 @@ AUR_PACKAGES=(
   catppuccin-cursors-mocha
 )
 
-NOCONFIRM=()
 AUR_HELPER=""
 
 # ---------------------------------------------------------------- helpers
@@ -48,20 +46,6 @@ AUR_HELPER=""
 log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m==> WARNING:\033[0m %s\n' "$*" >&2; }
 die()  { printf '\033[1;31m==> ERROR:\033[0m %s\n' "$*" >&2; exit 1; }
-
-parse_args() {
-  for arg in "$@"; do
-    case "$arg" in
-      -y|--yes) NOCONFIRM=(--noconfirm) ;;
-      -h|--help)
-        # Print the leading comment block (everything after the shebang).
-        awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"
-        exit 0
-        ;;
-      *) die "Unknown option: $arg" ;;
-    esac
-  done
-}
 
 preflight() {
   [[ $EUID -ne 0 ]] || die "Do not run this script as root. It will call sudo when needed."
@@ -90,7 +74,7 @@ append_once() {
 
 install_pacman_packages() {
   log "Installing official packages"
-  sudo pacman -Syu --needed "${NOCONFIRM[@]}" "${PACMAN_PACKAGES[@]}"
+  sudo pacman -Syu --needed "${PACMAN_PACKAGES[@]}"
 }
 
 ensure_aur_helper() {
@@ -102,12 +86,12 @@ ensure_aur_helper() {
   done
 
   log "No AUR helper found, building yay-bin from the AUR"
-  sudo pacman -S --needed "${NOCONFIRM[@]}" base-devel git
+  sudo pacman -S --needed base-devel git
 
   local tmp
   tmp="$(mktemp -d)"
   git clone https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
-  (cd "$tmp/yay-bin" && makepkg -si "${NOCONFIRM[@]}")
+  (cd "$tmp/yay-bin" && makepkg -si)
   rm -rf "$tmp"
   AUR_HELPER="yay"
 }
@@ -115,7 +99,7 @@ ensure_aur_helper() {
 install_aur_packages() {
   ensure_aur_helper
   log "Installing AUR packages with $AUR_HELPER"
-  "$AUR_HELPER" -S --needed "${NOCONFIRM[@]}" "${AUR_PACKAGES[@]}"
+  "$AUR_HELPER" -S --needed "${AUR_PACKAGES[@]}"
 }
 
 set_gtk_theme() {
@@ -141,39 +125,34 @@ set_gtk_theme() {
   fi
 }
 
-install_dotfiles() {
-  mkdir -p "$CONFIG_DIR"
+backup_existing_dotfiles() {
+  local backup path
+  backup="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 
-  if [[ -d "$CONFIG_DIR/.git" ]]; then
-    log "Dotfiles repo already exists in $CONFIG_DIR, updating"
-    git -C "$CONFIG_DIR" pull --ff-only origin "$BRANCH"
+  for path in .config .local/bin .zshrc; do
+    if [[ -e "$HOME/$path" || -L "$HOME/$path" ]]; then
+      log "Backing up $path to $backup"
+      mkdir -p "$backup/$(dirname "$path")"
+      cp -a "$HOME/$path" "$backup/$path"
+    fi
+  done
+}
+
+install_dotfiles() {
+  if [[ -e "$DOTFILES_DIR" ]]; then
+    [[ -d "$DOTFILES_DIR" ]] || die "$DOTFILES_DIR exists and is not a directory."
+    [[ "$(git --git-dir="$DOTFILES_DIR" rev-parse --is-bare-repository 2>/dev/null)" == true ]] ||
+      die "$DOTFILES_DIR exists but is not a bare Git repository."
+    log "Dotfiles repo already exists in $DOTFILES_DIR, updating"
+    git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" pull --ff-only origin "$BRANCH"
     return
   fi
 
-  local backup
-  backup="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
-  log "Backing up the existing config to $backup"
-  cp -a "$CONFIG_DIR" "$backup"
-
-  log "Cloning dotfiles into $CONFIG_DIR"
-  cd "$CONFIG_DIR"
-  git init -b "$BRANCH"
-  git remote add origin "$REPO_URL"
-  git fetch origin
-  git checkout -f -B "$BRANCH" "origin/$BRANCH"
-  git branch --set-upstream-to="origin/$BRANCH" "$BRANCH"
-}
-
-create_symlinks() {
-  log "Creating symlinks outside ~/.config"
-  mkdir -p "$HOME/.local/bin"
-  chmod +x "$CONFIG_DIR"/scripts/*
-  ln -sf "$CONFIG_DIR/scripts/screenshot"    "$HOME/.local/bin/screenshot"
-  ln -sf "$CONFIG_DIR/scripts/record"        "$HOME/.local/bin/record"
-  ln -sf "$CONFIG_DIR/scripts/music"         "$HOME/.local/bin/music"
-  ln -sf "$CONFIG_DIR/scripts/music-watch"   "$HOME/.local/bin/music-watch"
-  ln -sf "$CONFIG_DIR/scripts/ncmpcpp-mocha" "$HOME/.local/bin/ncmpcpp-mocha"
-  ln -sf "$CONFIG_DIR/zsh/.zshrc"            "$HOME/.zshrc"
+  backup_existing_dotfiles
+  log "Cloning dotfiles into $DOTFILES_DIR"
+  git clone --bare "$REPO_URL" "$DOTFILES_DIR"
+  git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout -f -B "$BRANCH" "$BRANCH"
+  git --git-dir="$DOTFILES_DIR" config --local status.showUntrackedFiles no
 }
 
 enable_mpd() {
@@ -199,13 +178,12 @@ print_next_steps() {
 # ------------------------------------------------------------------- main
 
 main() {
-  parse_args "$@"
+  [[ $# -eq 0 ]] || die "This script does not accept arguments."
   preflight
   install_pacman_packages
   install_aur_packages
   set_gtk_theme
   install_dotfiles
-  create_symlinks
   enable_mpd
   print_next_steps
 }
