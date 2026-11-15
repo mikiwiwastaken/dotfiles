@@ -139,7 +139,7 @@
   },
   "network": {
     "format-wifi": "\uf1eb",
-    "format-ethernet": "\uf6ff",
+    "format-ethernet": "\udb80\ude00",
     "format-disconnected": "\uf071",
     "format-disabled": "\udb81\uddaa",
     "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
