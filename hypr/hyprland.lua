@@ -6,5 +6,3 @@ require("configs.appearance")
 require("configs.animations")
 require("configs.keybinds")
 require("configs.rules")
-
-pcall(require, "hyprsettings")
