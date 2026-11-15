@@ -15,7 +15,9 @@ A Catppuccin Mocha Hyprland setup for Arch Linux.
 | Lock screen / idle   | hyprlock + hypridle     |
 | Terminal             | kitty                   |
 | Shell / prompt       | zsh + Starship          |
+| Code editor          | neovim                  |
 | File manager         | yazi                    |
+| Music player         | ncmpcpp                 |
 | Image viewer         | imv                     |
 | Document viewer      | zathura                 |
 | Video / audio player | mpv                     |
