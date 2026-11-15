@@ -24,3 +24,10 @@ prepend_rules = [
     { mime = "application/pdf", use = "pdf" },
     { mime = "video/*", use = "video" },
 ]
+
+[mgr]
+sort_by = "natural"
+sort_sensitive = false
+sort_reverse = false
+sort_dir_first = true
+sort_translit = false
