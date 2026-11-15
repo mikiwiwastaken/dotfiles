@@ -40,7 +40,7 @@ The `install.sh` script runs every step of the manual installation for you. It n
 Run the installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh | bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh)"
 ```
 
 The script:

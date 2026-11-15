@@ -11,7 +11,7 @@
 #
 # Usage:
 #   ./install.sh                  # interactive, pacman asks for confirmation
-#   curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh | bash
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh)"
 
 set -euo pipefail
 
