@@ -28,7 +28,7 @@
     },
     {
       "type": "os",
-      "key": "├{icon}", // Just get your distro's logo off nerdfonts.com
+      "key": "├󰣇",
       "keyColor": "38;2;203;166;247"
     },
     {
