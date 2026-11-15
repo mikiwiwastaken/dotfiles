@@ -5,7 +5,7 @@ edit = [
 ]
 
 image = [
-    { run = 'imv %s', orphan = true, for = "unix" },
+    { run = 'imv-dir %s', orphan = true, for = "unix" },
 ]
 
 pdf = [
