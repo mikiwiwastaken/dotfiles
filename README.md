@@ -31,8 +31,6 @@ A Catppuccin Mocha Hyprland setup for Arch Linux.
 
 ## Installation
 
-Pick one of the two methods below. Both give the same result.
-
 ### Automatic (recommended)
 
 The `install.sh` script runs every step of the manual installation for you. It needs a working Arch Linux install with `sudo` and an internet connection. Do not run it as root.
