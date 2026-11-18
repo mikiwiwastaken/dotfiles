@@ -68,7 +68,13 @@ window#waybar {
   padding: 0 16px 0 10px;
 }
 
-#custom-power:hover {
+/* #custom-*:hover no longer works in 0.16 */
+/* #custom-power:hover { */
+/*   color: #f38ba8; */
+/* } */
+
+/* workaround */
+box:hover #custom-power {
   color: #f38ba8;
 }
 
