@@ -39,8 +39,15 @@ eval "$(zoxide init zsh)"
 # Alias
 alias ls='eza --icons auto'
 alias cat='bat'
-alias y="yazi"
 alias ncmpcpp="$HOME/.local/bin/ncmpcpp-mocha"
+
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+	command rm -f -- "$tmp"
+}
 
 export FZF_DEFAULT_OPTS=" \
 --color=bg+:#313244,bg:#1E1E2E,spinner:#F5E0DC,hl:#F38BA8 \
