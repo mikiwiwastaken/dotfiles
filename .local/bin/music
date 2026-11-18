@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # MPRIS helper for hyprlock (uses playerctl).
-# Usage: music.sh --title | --artist | --album | --arturl | --status | --time
+# Usage: music --title | --artist | --album | --arturl | --status | --time
 
 CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/hyprlock-music"
 mkdir -p "$CACHE_DIR"

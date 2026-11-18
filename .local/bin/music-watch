@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Keeps the hyprlock now-playing card in sync without polling.
 #  - On every track change: pre-cache the album art, then ask hyprlock to
 #    refresh (SIGUSR2). Needs `reload_time = 0` on the image and
@@ -9,7 +9,7 @@
 #
 # Autostart it once per session (same place you start swaync/hyprpaper).
 
-MUSIC="$HOME/.config/hypr/music.sh"
+MUSIC="$HOME/.local/bin/music"
 
 refresh() {
 	pgrep -x hyprlock >/dev/null || return
