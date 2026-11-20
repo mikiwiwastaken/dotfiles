@@ -38,7 +38,7 @@ The `install.sh` script runs every step of the manual installation for you. It n
 Run the installer:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/no-qs.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/no-qs/install.sh)"
 ```
 
 The script:
