@@ -25,7 +25,7 @@ hl.window_rule({
 })
 
 hl.layer_rule({
-	match = { namespace = "^(waybar|wofi|swaync-control-center|swaync-notification-window|swayosd|logout_dialog)$" },
+	match = { namespace = "^(waybar|wofi|swaync-control-center|swaync-notification-window|swayosd)$" },
 	blur = true,
 	blur_popups = true,
 	ignore_alpha = 0,
@@ -39,11 +39,6 @@ hl.layer_rule({
 hl.layer_rule({
 	match = { namespace = "swaync-control-center" },
 	animation = "slide right",
-})
-
-hl.layer_rule({
-	match = { namespace = "logout_dialog" },
-	animation = "fade",
 })
 
 hl.layer_rule({
