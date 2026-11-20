@@ -21,9 +21,8 @@ DOTFILES_DIR="$HOME/.dotfiles"
 
 PACMAN_PACKAGES=(
   git hyprland xdg-desktop-portal-hyprland hyprpolkitagent
-  waybar wofi swaync swayosd hyprpaper archlinux-wallpaper hyprlock hypridle
-  grim slurp wf-recorder libnotify wl-clipboard cliphist
-  pavucontrol hyprpicker hyprsunset gvfs libqalculate
+  quickshell hyprpaper archlinux-wallpaper hyprlock hypridle hyprpicker
+  grim slurp wf-recorder wl-clipboard cliphist
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme
   ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji noto-fonts-cjk
   kitty zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions

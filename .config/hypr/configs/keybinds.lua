@@ -2,12 +2,12 @@ local mainMod = "SUPER"
 
 -------------------------------------------------------------------- independent keybinds
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("kitty"))
-hl.bind(mainMod .. " + SUPER_L", hl.dsp.exec_cmd("pkill wofi || wofi --show drun"), { release = true })
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("kitty -e yazi"))
 hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("kitty -e btop"))
+hl.bind(mainMod .. " + SUPER_L", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { release = true })
+hl.bind(mainMod .. " + Backspace", hl.dsp.exec_cmd("qs ipc call power toggle"), { release = true })
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("qs ipc call launcher clipboard"))
 
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
-hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("swaync-client -d -sw"))
 hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a -n"))
 
@@ -19,23 +19,12 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("~/.local/bin/record full"))
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.local/bin/record region"))
 hl.bind(mainMod .. " + CTRL + R", hl.dsp.exec_cmd("~/.local/bin/record window"))
 
-hl.bind(mainMod .. " + Backspace", hl.dsp.exec_cmd("~/.local/bin/wofi-menus power"))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("~/.local/bin/wofi-menus wifi"))
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("~/.local/bin/wofi-menus bluetooth"))
-hl.bind(mainMod .. " + period", hl.dsp.exec_cmd("~/.local/bin/wofi-menus emoji"))
-hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("~/.local/bin/wofi-menus windows"))
-hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("~/.local/bin/wofi-menus calc"))
-hl.bind(
-	mainMod .. " + V",
-	hl.dsp.exec_cmd([[sh -c 'cliphist list | wofi --dmenu -p "Clipboard" | cliphist decode | wl-copy']])
-)
-
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume raise"), { repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume lower"), { repeating = true })
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle"), { repeating = true })
-hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("swayosd-client --input-volume mute-toggle"), { repeating = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("swayosd-client --brightness raise"), { repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("swayosd-client --brightness lower"), { repeating = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("qs ipc call osd volumeUp"), { repeating = true, locked = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("qs ipc call osd volumeDown"), { repeating = true, locked = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("qs ipc call osd volumeMute"), { locked = true })
+hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("qs ipc call osd micMute"), { locked = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("qs ipc call osd brightnessUp"), { repeating = true, locked = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("qs ipc call osd brightnessDown"), { repeating = true, locked = true })
 
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })

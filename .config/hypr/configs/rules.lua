@@ -25,20 +25,29 @@ hl.window_rule({
 })
 
 hl.layer_rule({
-	match = { namespace = "^(waybar|wofi|swaync-control-center|swaync-notification-window|swayosd)$" },
+	match = {
+		namespace = "qs-bar",
+	},
+	no_anim = true,
 	blur = true,
 	blur_popups = true,
-	ignore_alpha = 0,
+	ignore_alpha = 0.2,
 })
 
 hl.layer_rule({
-	match = { namespace = "wofi" },
-	animation = "popin 95%",
+	match = {
+		namespace = "qs-osd",
+	},
+	no_anim = true,
+	blur = true,
+	ignore_alpha = 0.2,
 })
 
 hl.layer_rule({
-	match = { namespace = "swaync-control-center" },
-	animation = "slide right",
+	match = { namespace = "^(qs-launcher|qs-power)$" },
+	blur = true,
+	ignore_alpha = 0.5,
+	no_anim = true,
 })
 
 hl.layer_rule({
