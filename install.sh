@@ -11,12 +11,12 @@
 #
 # Usage:
 #   ./install.sh                  # interactive, pacman asks for confirmation
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/no-qs/install.sh)"
 
 set -euo pipefail
 
 REPO_URL="${DOTFILES_REPO:-https://github.com/mikiwiwastaken/dotfiles.git}"
-BRANCH="main"
+BRANCH="no-qs"
 DOTFILES_DIR="$HOME/.dotfiles"
 
 PACMAN_PACKAGES=(
