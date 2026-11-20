@@ -38,7 +38,7 @@ The `install.sh` script runs every step of the manual installation for you. It n
 Run the installer:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/main/no-qs.sh)"
 ```
 
 The script:
@@ -96,14 +96,14 @@ Back up any existing `~/.config`, `~/.local/bin` and `~/.zshrc` files first. Clo
 
 ```bash
 git clone --bare https://github.com/mikiwiwastaken/dotfiles.git ~/.dotfiles
-git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout -f -B main main
+git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout -f -B no-qs no-qs
 git --git-dir="$HOME/.dotfiles" config --local status.showUntrackedFiles no
 ```
 
 To update the dotfiles later:
 
 ```bash
-git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" pull --ff-only origin main
+git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" pull --ff-only origin no-qs
 ```
 
 #### 4. Start the mpd service
