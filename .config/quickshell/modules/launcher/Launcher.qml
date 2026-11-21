@@ -625,7 +625,7 @@ PanelWindow {
             property: "opacity"
             from: 0
             to: 1
-            duration: Appearance.normal
+            duration: Appearance.fast
             easing.type: Easing.OutCubic
         }
 
@@ -634,7 +634,7 @@ PanelWindow {
             property: "slideOffset"
             from: -10
             to: 0
-            duration: Appearance.normal
+            duration: Appearance.fast
             easing.type: Easing.OutCubic
         }
     }
