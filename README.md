@@ -61,7 +61,7 @@ When it finishes, log out and start Hyprland using `start-hyprland` or by select
 sudo pacman -Syu --needed \
   git hyprland xdg-desktop-portal-hyprland hyprpolkitagent \
   quickshell hyprpaper archlinux-wallpaper hyprlock hypridle hyprpicker \
-  grim slurp wf-recorder wl-clipboard cliphist \
+  grim slurp wf-recorder wl-clipboard cliphist libnotify \
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme \
   ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji noto-fonts-cjk \
   kitty zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions \
