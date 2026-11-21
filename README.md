@@ -116,3 +116,21 @@ Check that it is running:
 systemctl --user status mpd.service
 mpc status   # or open ncmpcpp
 ```
+
+### Hybrid Intel + NVIDIA graphics
+
+On an Intel/NVIDIA laptop, `install-hybrid-gpu.sh` installs and configures the
+open NVIDIA kernel modules, DRM modesetting, stable DRM device names, and the
+Hyprland and mpv settings. Run it from the dotfiles checkout:
+
+```bash
+bash ./install-hybrid-gpu.sh
+```
+
+The script uses `nvidia-open` for the stock Arch kernel and
+`nvidia-open-dkms` with matching headers for other detected kernels. Reboot
+after it completes. Confirm modesetting is enabled with:
+
+```bash
+cat /sys/module/nvidia_drm/parameters/modeset
+```
