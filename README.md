@@ -41,7 +41,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mikiwiwastaken/dotfiles/
 The script:
 
 1. Installs the official packages with `pacman`.
-2. Installs the AUR packages. If no AUR helper (`yay` or `paru`) is found, it builds `yay-bin` first.
+2. Builds and installs the AUR packages with `makepkg`
 3. Applies the GTK theme with `gsettings`.
 4. Clones this repo as a bare repository into `~/.dotfiles` and checks its files out directly into your home directory. Existing `~/.config`, `~/.local/bin` and `~/.zshrc` are backed up to `~/.dotfiles-backup-<timestamp>` first. If the bare repository is already there, it updates it with `git pull --ff-only`.
 5. Enables and starts the `mpd` user service.
@@ -59,7 +59,7 @@ When it finishes, log out and start Hyprland using `start-hyprland` or by select
 
 ```bash
 sudo pacman -Syu --needed \
-  git hyprland xdg-desktop-portal-hyprland hyprpolkitagent \
+  base-devel git hyprland xdg-desktop-portal-hyprland hyprpolkitagent \
   quickshell hyprpaper archlinux-wallpaper hyprlock hypridle hyprpicker \
   grim slurp wf-recorder wl-clipboard cliphist libnotify \
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme \
@@ -75,10 +75,13 @@ sudo pacman -Syu --needed \
 > [!NOTE]
 > For Quickshell's network, audio, battery, and power profile controls to work reliably, install the optional service packages if they are not already present: `networkmanager`, `pipewire`, `wireplumber`, `upower`, and `power-profiles-daemon`. Keep the corresponding services running in your system or user session. Without them, Quickshell can still start, but those controls may be unavailable.
 
-AUR packages (requires an AUR helper such as `yay`):
+AUR packages:
 
 ```bash
-yay -S --needed catppuccin-gtk-theme-mocha catppuccin-cursors-mocha
+for pkg in catppuccin-gtk-theme-mocha catppuccin-cursors-mocha; do
+  git clone "https://aur.archlinux.org/${pkg}.git" "/tmp/${pkg}"
+  (cd "/tmp/${pkg}" && makepkg -si)
+done
 ```
 
 #### 2. GTK theme

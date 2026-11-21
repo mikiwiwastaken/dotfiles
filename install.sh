@@ -4,7 +4,7 @@
 #
 # What it does:
 #   1. Installs the official packages with pacman
-#   2. Installs the AUR packages (bootstraps yay if no AUR helper is found)
+#   2. Installs the AUR packages
 #   3. Applies the GTK theme with gsettings
 #   4. Checks out the dotfiles into $HOME from a bare repo in ~/.dotfiles
 #   5. Enables and starts the mpd user service
@@ -20,7 +20,7 @@ BRANCH="main"
 DOTFILES_DIR="$HOME/.dotfiles"
 
 PACMAN_PACKAGES=(
-  git hyprland xdg-desktop-portal-hyprland hyprpolkitagent
+  base-devel git hyprland xdg-desktop-portal-hyprland hyprpolkitagent
   quickshell hyprpaper archlinux-wallpaper hyprlock hypridle hyprpicker
   grim slurp wf-recorder wl-clipboard cliphist libnotify
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme
@@ -37,8 +37,6 @@ AUR_PACKAGES=(
   catppuccin-gtk-theme-mocha
   catppuccin-cursors-mocha
 )
-
-AUR_HELPER=""
 
 # ---------------------------------------------------------------- helpers
 
@@ -76,29 +74,21 @@ install_pacman_packages() {
   sudo pacman -Syu --needed "${PACMAN_PACKAGES[@]}"
 }
 
-ensure_aur_helper() {
-  for helper in yay paru; do
-    if command -v "$helper" >/dev/null; then
-      AUR_HELPER="$helper"
-      return
-    fi
-  done
-
-  log "No AUR helper found, building yay-bin from the AUR"
-  sudo pacman -S --needed base-devel git
-
-  local tmp
-  tmp="$(mktemp -d)"
-  git clone https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
-  (cd "$tmp/yay-bin" && makepkg -si)
-  rm -rf "$tmp"
-  AUR_HELPER="yay"
-}
-
 install_aur_packages() {
-  ensure_aur_helper
-  log "Installing AUR packages with $AUR_HELPER"
-  "$AUR_HELPER" -S --needed "${AUR_PACKAGES[@]}"
+  local pkg tmp
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+
+  for pkg in "${AUR_PACKAGES[@]}"; do
+    if pacman -Qq "$pkg" >/dev/null 2>&1; then
+      log "$pkg is already installed, skipping"
+      continue
+    fi
+
+    log "Building $pkg from the AUR with makepkg"
+    git clone --depth 1 "https://aur.archlinux.org/${pkg}.git" "$tmp/$pkg"
+    (cd "$tmp/$pkg" && makepkg -si)
+  done
 }
 
 set_gtk_theme() {
