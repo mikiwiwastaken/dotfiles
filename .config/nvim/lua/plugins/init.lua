@@ -13,6 +13,7 @@ return {
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
+		cmd = "Telescope",
 		keys = {
 			{ "<leader>ff", "<cmd>Telescope find_files<CR>", desc = "Find files" },
 			{ "<leader>fg", "<cmd>Telescope live_grep<CR>", desc = "Grep" },
@@ -50,5 +51,13 @@ return {
 	},
 
 	-- Statusline
-	{ "nvim-lualine/lualine.nvim", opts = {} },
+	{
+		"nvim-lualine/lualine.nvim",
+		opts = function(_, opts)
+			opts.options = opts.options or {}
+			opts.options.disabled_filetypes = opts.options.disabled_filetypes or {}
+			opts.options.disabled_filetypes.statusline =
+				vim.list_extend(opts.options.disabled_filetypes.statusline or {}, { "dashboard" })
+		end,
+	},
 }

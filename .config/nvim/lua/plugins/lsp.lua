@@ -35,6 +35,11 @@ return {
 				settings = { Lua = { diagnostics = { globals = { "vim" } } } },
 			})
 
+			vim.lsp.config("qmlls", {
+				cmd = { "qmlls6" },
+			})
+			vim.lsp.enable("qmlls")
+
 			-- Buffer-local keymaps when a server attaches
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(ev)
