@@ -1,9 +1,11 @@
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.Notifications
 import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.modules.bar
+import qs.modules.notifications
 
 Item {
     id: root
@@ -14,6 +16,8 @@ Item {
 
     readonly property int toastWidth: 360
     readonly property int toastSwipeSpace: toastWidth
+    // Critical notifications still pop up while Do Not Disturb is on
+    readonly property bool criticalBypassesDnd: true
     property int nextToastToken: 0
     property var seenNotificationIds: ({})
 
@@ -70,6 +74,9 @@ Item {
             root.seenNotificationIds[notificationKey] = true;
             if (notification.lastGeneration)
                 return;
+            // Do Not Disturb: the notification stays in the list, but no toast
+            if (DoNotDisturb.enabled && !(root.criticalBypassesDnd && notification.urgency === NotificationUrgency.Critical))
+                return;
             if (popup.visible)
                 return;
 
@@ -84,15 +91,34 @@ Item {
         }
     }
 
+    Connections {
+        target: DoNotDisturb
+
+        function onEnabledChanged() {
+            if (!DoNotDisturb.enabled)
+                return;
+
+            toastHideTimer.stop();
+            toastNotifications.clear();
+            toast.visible = false;
+        }
+    }
+
     StatusItem {
         id: button
 
-        icon: "\uf0f3"
+        icon: DoNotDisturb.enabled ? "\uf1f6" : "\uf0f3"
         iconColor: root.notificationServer.trackedNotifications.values.length > 0 ? Colors.red : Colors.text
 
         onClicked: mouseButton => {
-            if (mouseButton === Qt.LeftButton)
+            if (mouseButton === Qt.LeftButton) {
+                // Ignore the click that dismissed the popup (focus grab)
+                if (Date.now() - popup.closedAt < 200)
+                    return;
                 popup.visible = !popup.visible;
+            } else if (mouseButton === Qt.RightButton) {
+                DoNotDisturb.toggle();
+            }
         }
     }
 
@@ -232,6 +258,8 @@ Item {
     PopupWindow {
         id: popup
 
+        property double closedAt: 0
+
         anchor.item: root.anchorItem
         anchor.edges: Edges.Bottom | Edges.Right
         anchor.gravity: Edges.Bottom | Edges.Left
@@ -281,7 +309,7 @@ Item {
 
                     Text {
                         text: "\uf0f3"
-                        color: Colors.mauve
+                        color: Colors.text
                         font.family: Appearance.fontFamily
                         font.pixelSize: Appearance.fontLarge
                     }
@@ -346,6 +374,68 @@ Item {
                     color: Colors.surface1
                 }
 
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 30
+                    Layout.leftMargin: 6
+                    Layout.rightMargin: 6
+                    spacing: 10
+
+                    Text {
+                        text: "\uf1f6"
+                        color: DoNotDisturb.enabled ? Colors.mauve : Colors.surface2
+                        font.family: Appearance.fontFamily
+                        font.pixelSize: Appearance.fontNormal
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: "Do not disturb"
+                        color: Colors.text
+                        font.family: Appearance.fontFamily
+                        font.pixelSize: Appearance.fontSmall
+                    }
+
+                    Item {
+                        implicitWidth: 36
+                        implicitHeight: 20
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: height / 2
+                            color: DoNotDisturb.enabled ? Colors.mauve : Colors.surface1
+
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: Appearance.fast
+                                }
+                            }
+
+                            Rectangle {
+                                width: 16
+                                height: 16
+                                y: 2
+                                x: DoNotDisturb.enabled ? parent.width - width - 2 : 2
+                                radius: 8
+                                color: DoNotDisturb.enabled ? Colors.base : Colors.surface2
+
+                                Behavior on x {
+                                    NumberAnimation {
+                                        duration: Appearance.normal
+                                        easing.type: Easing.OutCubic
+                                    }
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: DoNotDisturb.toggle()
+                        }
+                    }
+                }
+
                 ListView {
                     id: notificationList
 
@@ -387,9 +477,12 @@ Item {
                 panel.opacity = 0;
                 panel.y = -10;
                 popupOpenAnim.restart();
-            } else if (toastNotifications.count > 0) {
-                toastHideTimer.stop();
-                toast.visible = true;
+            } else {
+                closedAt = Date.now();
+                if (toastNotifications.count > 0) {
+                    toastHideTimer.stop();
+                    toast.visible = true;
+                }
             }
         }
 

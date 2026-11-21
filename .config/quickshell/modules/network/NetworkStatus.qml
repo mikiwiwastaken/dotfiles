@@ -29,7 +29,11 @@ StatusItem {
     }
 
     onClicked: button => {
-        if (button === Qt.LeftButton)
+        if (button === Qt.LeftButton) {
+            // Ignore the click that dismissed the popup (focus grab)
+            if (Date.now() - popup.closedAt < 200)
+                return;
             popup.open();
+        }
     }
 }

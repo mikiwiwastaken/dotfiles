@@ -23,7 +23,7 @@ PopupWindow {
     anchor.item: root.anchorItem
     anchor.edges: Edges.Bottom
     anchor.gravity: Edges.Bottom
-    anchor.margins.bottom: -19
+    anchor.margins.bottom: -9
 
     implicitWidth: panel.width
     implicitHeight: panel.height
@@ -124,7 +124,7 @@ PopupWindow {
             width: panel.width - root.padding * 2
             spacing: 4
 
-                RowLayout {
+            RowLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 34
                 Layout.leftMargin: 6

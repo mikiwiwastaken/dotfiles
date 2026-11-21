@@ -240,6 +240,10 @@ Item {
                     return;
                 }
 
+                // Ignore clicks while a connect/disconnect is already in flight
+                if (root.busy)
+                    return;
+
                 // Clicking the row that is asking for a password cancels the prompt
                 if (root.askPassword) {
                     root.promptCleared();

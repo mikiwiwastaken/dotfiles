@@ -9,6 +9,9 @@ PopupWindow {
 
     required property Item anchorItem
 
+    // Time the popup was last dismissed, used to ignore the click that dismissed it
+    property double closedAt: 0
+
     // The network whose password field is shown (only one at a time)
     property var promptNetwork: null
 
@@ -32,14 +35,12 @@ PopupWindow {
     }
 
     onVisibleChanged: {
-        if (root.wifi)
-            root.wifi.scannerEnabled = visible;
-
         if (visible) {
             panel.opacity = 0;
             panel.y = -10;
             openAnim.restart();
         } else {
+            root.closedAt = Date.now();
             root.promptNetwork = null;
         }
     }
@@ -61,6 +62,14 @@ PopupWindow {
         }) : []
     }
 
+    // Scan only while the popup is open, and follow the device if it changes
+    Binding {
+        target: root.wifi
+        property: "scannerEnabled"
+        value: root.visible
+        when: root.wifi !== null
+    }
+
     Rectangle {
         id: panel
 
@@ -71,7 +80,6 @@ PopupWindow {
         color: Qt.rgba(Colors.base.r, Colors.base.g, Colors.base.b, Appearance.popup)
         border.width: Appearance.borderLine
         border.color: Colors.surface1
-        transformOrigin: Item.TopRight
         focus: root.visible
 
         Keys.onEscapePressed: root.visible = false
@@ -115,10 +123,11 @@ PopupWindow {
                     id: wifiSwitch
 
                     readonly property bool checked: Networking.wifiEnabled
-                    signal toggled
 
                     implicitWidth: 36
                     implicitHeight: 20
+                    enabled: Networking.wifiHardwareEnabled
+                    opacity: enabled ? 1 : 0.5
 
                     Rectangle {
                         anchors.fill: parent
@@ -134,17 +143,12 @@ PopupWindow {
                         Rectangle {
                             width: 16
                             height: 16
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                left: wifiSwitch.checked ? undefined : parent.left
-                                right: wifiSwitch.checked ? parent.right : undefined
-                                leftMargin: 2
-                                rightMargin: 2
-                            }
+                            y: 2
+                            x: wifiSwitch.checked ? parent.width - width - 2 : 2
                             radius: 8
                             color: wifiSwitch.checked ? Colors.base : Colors.surface2
 
-                            Behavior on anchors.leftMargin {
+                            Behavior on x {
                                 NumberAnimation {
                                     duration: Appearance.normal
                                     easing.type: Easing.OutCubic
@@ -156,10 +160,7 @@ PopupWindow {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Networking.wifiEnabled = !wifiSwitch.checked;
-                            wifiSwitch.toggled();
-                        }
+                        onClicked: Networking.wifiEnabled = !wifiSwitch.checked
                     }
                 }
             }

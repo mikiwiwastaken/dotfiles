@@ -1,7 +1,6 @@
 import Quickshell
 import QtQuick
 import qs.config
-import qs.modules.calendar
 
 Item {
     id: root

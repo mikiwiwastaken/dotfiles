@@ -1,0 +1,4 @@
+module qs.modules.notifications
+singleton DoNotDisturb 1.0 DoNotDisturb.qml
+NotificationCenter 1.0 NotificationCenter.qml
+NotificationRow 1.0 NotificationRow.qml

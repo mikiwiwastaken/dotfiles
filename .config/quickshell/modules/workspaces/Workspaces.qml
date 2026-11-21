@@ -1,3 +1,4 @@
+import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 import qs.config
@@ -91,16 +92,77 @@ Row {
                 }
             }
 
+            // Becomes true after a short hover delay so quick passes do not flash the tooltip
+            property bool tipReady: false
+
+            Timer {
+                id: tipTimer
+
+                interval: 300
+                running: area.containsMouse
+                onTriggered: cell.tipReady = true
+            }
+
             MouseArea {
+                id: area
+
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
+                onContainsMouseChanged: {
+                    if (!containsMouse)
+                        cell.tipReady = false;
+                }
+
                 onClicked: {
+                    // Hide the tooltip while the pill animates; it comes back after the mouse re-enters
+                    cell.tipReady = false;
+                    tipTimer.stop();
+
                     if (Hyprland.usingLua)
                         Hyprland.dispatch(`hl.dsp.focus({ workspace = "${cell.wsId}" })`);
                     else
                         Hyprland.dispatch(`workspace ${cell.wsId}`);
+                }
+            }
+
+            PopupWindow {
+                id: tooltip
+
+                // Centered below the pill, just under the bar
+                anchor.item: cell
+                anchor.rect.x: 0
+                anchor.rect.y: 0
+                anchor.rect.width: cell.focused ? 32 : 12
+                anchor.rect.height: cell.height + (Appearance.barHeight - cell.height) / 2 + 4
+                anchor.edges: Edges.Bottom
+                anchor.gravity: Edges.Bottom
+
+                implicitWidth: tipPanel.width
+                implicitHeight: tipPanel.height
+                visible: cell.tipReady && area.containsMouse
+                color: "transparent"
+
+                Rectangle {
+                    id: tipPanel
+
+                    width: tipLabel.implicitWidth + 20
+                    height: tipLabel.implicitHeight + 12
+                    radius: 8
+                    color: Qt.rgba(Colors.base.r, Colors.base.g, Colors.base.b, Appearance.tooltip)
+                    border.width: Appearance.borderLine
+                    border.color: Colors.surface1
+
+                    Text {
+                        id: tipLabel
+
+                        anchors.centerIn: parent
+                        text: cell.wsId
+                        color: Colors.text
+                        font.family: Appearance.fontFamily
+                        font.pixelSize: Appearance.fontSmall
+                    }
                 }
             }
         }

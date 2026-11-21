@@ -77,6 +77,7 @@ PanelWindow {
 
         Clock {
             anchors.centerIn: parent
+            anchorItem: parent
         }
 
         Row {
