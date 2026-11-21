@@ -18,6 +18,7 @@ PopupWindow {
     anchor.edges: Edges.Bottom | Edges.Right
     anchor.gravity: Edges.Bottom | Edges.Left
     anchor.margins.bottom: -15
+    anchor.margins.right: -30
 
     grabFocus: true
     color: "transparent"
