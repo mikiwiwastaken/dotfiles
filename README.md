@@ -72,6 +72,9 @@ sudo pacman -Syu --needed \
   imv zathura zathura-pdf-mupdf tesseract-data-eng mpv
 ```
 
+> [!NOTE]
+> For Quickshell's network, audio, battery, and power profile controls to work reliably, install the optional service packages if they are not already present: `networkmanager`, `pipewire`, `wireplumber`, `upower`, and `power-profiles-daemon`. Keep the corresponding services running in your system or user session. Without them, Quickshell can still start, but those controls may be unavailable.
+
 AUR packages (requires an AUR helper such as `yay`):
 
 ```bash

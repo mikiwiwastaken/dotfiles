@@ -172,6 +172,7 @@ enable_mpd() {
 print_next_steps() {
   printf '\nDone. Next steps:\n'
   printf '  - Log out and start Hyprland from your display manager or TTY.\n'
+  printf '  - Read the README for optional Quickshell packages and setup notes.\n'
 }
 
 # ------------------------------------------------------------------- main
