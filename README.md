@@ -73,7 +73,7 @@ sudo pacman -Syu --needed \
 ```
 
 > [!NOTE]
-> For Quickshell's network, audio, battery, and power profile controls to work reliably, install the optional service packages if they are not already present: `networkmanager`, `pipewire`, `wireplumber`, `upower`, and `power-profiles-daemon`. Keep the corresponding services running in your system or user session. Without them, Quickshell can still start, but those controls may be unavailable.
+> Quickshell’s network, audio, battery, and power profile controls depend on system services. Install and enable only the services for the controls you want to use: `networkmanager` for network controls (you probably have this), `pipewire` and `wireplumber` for audio, and `upower` and `power-profiles-daemon` for battery and power profile controls.
 
 AUR packages:
 
