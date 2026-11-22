@@ -43,6 +43,8 @@ PanelWindow {
 
     property real slideOffset: -10
     property bool closing: false
+    // Last known mouse position in window coordinates; (-1, -1) = no baseline yet
+    property point lastMousePos: Qt.point(-1, -1)
     readonly property real panelTop: Math.round(root.height * 0.18)
 
     WlrLayershell.namespace: "qs-launcher"
@@ -258,6 +260,7 @@ PanelWindow {
     onVisibleChanged: {
         if (visible) {
             root.closing = false;
+            root.lastMousePos = Qt.point(-1, -1);
             input.text = root.initialQuery;
             list.currentIndex = 0;
 
@@ -596,8 +599,23 @@ PanelWindow {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        // Only real mouse movement changes the selection (not scrolling or typing)
-                        onPositionChanged: list.currentIndex = row.index
+                        // Only real pointer movement (in window coordinates) changes selection.
+                        // Content moving under a stationary cursor (typing, scrolling) is ignored.
+                        onPositionChanged: mouse => {
+                            const p = mapToItem(null, mouse.x, mouse.y);
+
+                            // First event after opening only sets the baseline.
+                            if (root.lastMousePos.x < 0) {
+                                root.lastMousePos = Qt.point(p.x, p.y);
+                                return;
+                            }
+
+                            if (p.x === root.lastMousePos.x && p.y === root.lastMousePos.y)
+                                return;
+
+                            root.lastMousePos = Qt.point(p.x, p.y);
+                            list.currentIndex = row.index;
+                        }
                         onClicked: root.activate(row.modelData, false)
                     }
                 }
