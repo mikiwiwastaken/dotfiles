@@ -8,10 +8,8 @@ return {
 		event = "VimEnter",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			-- Remove the "~" at the end of the buffer
 			vim.opt.fillchars:append({ eob = " " })
 
-			-- Catppuccin colors for the dashboard
 			local function set_highlights()
 				local ok, palettes = pcall(require, "catppuccin.palettes")
 				if not ok then
@@ -58,7 +56,7 @@ return {
 				"",
 			}
 
-			local GAP = 12 -- spaces between the longest desc and the key
+			local GAP = 12
 
 			local entries = {
 				{ ic = 0xF002, hl = "DashIconFind", desc = "Find file", key = "f", action = "Telescope find_files" },
