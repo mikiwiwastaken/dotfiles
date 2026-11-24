@@ -54,14 +54,17 @@ AUR_TMP=""
 
 # ---------------------------------------------------------------- helpers
 
-log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m==> WARNING:\033[0m %s\n' "$*" >&2; }
-die()  { printf '\033[1;31m==> ERROR:\033[0m %s\n' "$*" >&2; exit 1; }
+die() {
+  printf '\033[1;31m==> ERROR:\033[0m %s\n' "$*" >&2
+  exit 1
+}
 
 preflight() {
   [[ $EUID -ne 0 ]] || die "Do not run this script as root. It will call sudo when needed."
   command -v pacman >/dev/null || die "pacman not found. This script only supports Arch Linux."
-  command -v sudo   >/dev/null || die "sudo not found. Install it and add your user to the wheel group."
+  command -v sudo >/dev/null || die "sudo not found. Install it and add your user to the wheel group."
 }
 
 # Append LINE to FILE unless a line containing KEY is already there.
@@ -76,19 +79,19 @@ append_once() {
 
   # Make sure the previous last line is newline-terminated.
   if [[ -s "$file" && -n "$(tail -c1 "$file")" ]]; then
-    printf '\n' >> "$file"
+    printf '\n' >>"$file"
   fi
-  printf '%s\n' "$line" >> "$file"
+  printf '%s\n' "$line" >>"$file"
 }
 
 # Ask a yes/no question. The second argument is the default answer.
 ask() {
   local prompt="$1" default="${2:-n}" hint reply=""
 
-  { true < /dev/tty; } 2>/dev/null || return 1
+  { true </dev/tty; } 2>/dev/null || return 1
 
   if [[ "$default" == y ]]; then hint="Y/n"; else hint="y/N"; fi
-  read -r -p "$prompt [$hint] " reply < /dev/tty || true
+  read -r -p "$prompt [$hint] " reply </dev/tty || true
   reply="${reply:-$default}"
   [[ "$reply" =~ ^[Yy] ]]
 }
@@ -163,8 +166,8 @@ set_gtk_theme() {
 
   if ! {
     "${runner[@]}" gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' &&
-    "${runner[@]}" gsettings set org.gnome.desktop.interface gtk-theme 'catppuccin-mocha-blue-standard+default' &&
-    "${runner[@]}" gsettings set org.gnome.desktop.interface cursor-theme 'catppuccin-mocha-dark-cursors'
+      "${runner[@]}" gsettings set org.gnome.desktop.interface gtk-theme 'catppuccin-mocha-blue-standard+default' &&
+      "${runner[@]}" gsettings set org.gnome.desktop.interface cursor-theme 'catppuccin-mocha-dark-cursors'
   }; then
     warn "Could not apply the GTK theme. Run the gsettings commands from the README inside your Hyprland session."
   fi
@@ -392,7 +395,8 @@ EOF
 
 print_next_steps() {
   printf '\nDone. Next steps:\n'
-  printf '  - Reboot to refresh the system and apply the changes made above.\n'
+  printf '  - Reboot to apply the changes.\n'
+  printf '  - Start Hyprland using start-hyprland or by selecting it from your preferred display manager.\n'
 }
 
 # ------------------------------------------------------------------- main
