@@ -51,7 +51,11 @@ return {
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function(args)
 					pcall(vim.treesitter.start, args.buf)
-					vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					if vim.bo[args.buf].filetype == "sh" then
+						vim.bo[args.buf].indentexpr = "GetShIndent()"
+					else
+						vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					end
 				end,
 			})
 		end,
