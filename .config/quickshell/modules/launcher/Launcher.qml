@@ -92,6 +92,13 @@ PanelWindow {
                     });
                 }
                 root.clipEntries = entries;
+
+                // The model keeps the selection on the previously focused entry when new
+                // items are inserted above it, so snap back to the newest entry.
+                Qt.callLater(() => {
+                    list.currentIndex = 0;
+                    list.positionViewAtBeginning();
+                });
             }
         }
     }
