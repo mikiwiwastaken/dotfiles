@@ -32,7 +32,7 @@ PACMAN_PACKAGES=(
   ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji noto-fonts-cjk
   kitty zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions
   neovim unzip tree-sitter-cli
-  starship eza bat ripgrep fd fzf zoxide ncdu
+  starship eza bat ripgrep fd fzf zoxide gdu
   btop fastfetch cava mpd ncmpcpp
   yazi ffmpeg 7zip jq poppler resvg
   imv zathura zathura-pdf-mupdf tesseract-data-eng mpv
