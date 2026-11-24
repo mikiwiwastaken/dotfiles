@@ -28,7 +28,7 @@ hl.layer_rule({
 	match = { namespace = "^(waybar|wofi|swaync-control-center|swaync-notification-window|swayosd)$" },
 	blur = true,
 	blur_popups = true,
-	ignore_alpha = 0,
+	ignore_alpha = 0.2,
 })
 
 hl.layer_rule({

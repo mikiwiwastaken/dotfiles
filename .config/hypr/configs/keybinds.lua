@@ -13,7 +13,7 @@ hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a -n"))
 
 hl.bind("Print", hl.dsp.exec_cmd("~/.local/bin/screenshot full"))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("~/.local/bin/screenshot region"))
-hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.local/bin/screenshot region"))
+hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.local/bin/screenshot window"))
 
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("~/.local/bin/record full"))
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.local/bin/record region"))

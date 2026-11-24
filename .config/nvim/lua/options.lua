@@ -19,3 +19,5 @@ o.clipboard = "unnamedplus"
 o.updatetime = 250
 o.backup = false
 o.swapfile = false
+o.ruler = false
+o.showcmd = false
