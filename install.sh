@@ -7,7 +7,7 @@
 #   2. Installs the AUR packages
 #   3. Applies the GTK theme with gsettings
 #   4. Checks out the dotfiles into $HOME from a bare repo in ~/.dotfiles
-#   5. Enables the mpd user service and the services the Quickshell controls use
+#   5. Enables the mpd user service and the services the controls rely on
 #   6. Optionally sets up the greetd login manager (tuigreet)
 #   7. Optionally applies the Catppuccin Mocha palette to the TTY
 #   8. Optionally sets up hybrid Intel + NVIDIA graphics (only offered when
@@ -36,7 +36,7 @@ PACMAN_PACKAGES=(
   btop fastfetch cava mpd ncmpcpp
   yazi ffmpeg 7zip jq poppler resvg
   imv zathura zathura-pdf-mupdf tesseract-data-eng mpv
-  networkmanager pipewire wireplumber
+  networkmanager pipewire wireplumber brightnessctl
 )
 
 BATTERY_PACKAGES=(
@@ -218,11 +218,11 @@ enable_mpd() {
   fi
 }
 
-setup_quickshell_services() {
-  log "Enabling the services used by the Quickshell controls"
+setup_services() {
+  log "Enabling the services used by the controls"
 
   if ! command -v systemctl >/dev/null; then
-    warn "systemctl not found, skipping the Quickshell services."
+    warn "systemctl not found, skipping the services."
     return
   fi
 
@@ -238,7 +238,7 @@ setup_quickshell_services() {
     done
 
     if [[ -n "$conflict" ]]; then
-      warn "$conflict is enabled, so NetworkManager was left disabled. The Quickshell network controls need it."
+      warn "$conflict is enabled, so NetworkManager was left disabled. The network controls need it."
     else
       sudo systemctl enable --now NetworkManager.service ||
         warn "Could not enable NetworkManager."
@@ -409,7 +409,7 @@ main() {
   set_gtk_theme
   install_dotfiles
   enable_mpd
-  setup_quickshell_services
+  setup_services
 
   local greetd_chosen=false
   if ask "Set up the greetd login manager (tuigreet)?" n; then

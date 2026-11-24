@@ -44,7 +44,7 @@ The script:
 2. Builds and installs the AUR packages with `makepkg`.
 3. Applies the GTK theme with `gsettings`.
 4. Clones this repo as a bare repository into `~/.dotfiles` and checks its files out directly into your home directory. Existing `~/.config`, `~/.local/bin` and `~/.zshrc` are backed up to `~/.dotfiles-backup-<timestamp>` first. If the bare repository is already there, it updates it with `git pull --ff-only`.
-5. Enables the `mpd` user service and the services used by the Quickshell controls.
+5. Enables the `mpd` user service and the services used by the network, audio, battery and power profile controls.
 6. Asks whether to set up the optional [greetd login manager](#greetd-login-manager), the [Catppuccin TTY theme](#catppuccin-tty-theme) and, when it detects both an Intel and an NVIDIA GPU, [hybrid graphics](#hybrid-intel--nvidia-graphics).
 
 It is safe to run again: packages are installed with `--needed`; dotfiles updates use a fast-forward-only pull and preserve local changes.
@@ -74,7 +74,7 @@ sudo pacman -Syu --needed \
 ```
 
 > [!NOTE]
-> Quickshell’s network, audio, battery, and power profile controls depend on system services. Install and enable only the services for the controls you want to use: `networkmanager` for network controls (you probably have this), `pipewire` and `wireplumber` for audio, and `upower` and `power-profiles-daemon` for battery and power profile controls.
+> The network, audio, battery, power profile and brightness controls depend on extra packages and services. Install and enable only the ones for the controls you want to use: `networkmanager` for network controls (you probably have this), `pipewire` and `wireplumber` for audio, `upower` and `power-profiles-daemon` for battery and power profile controls, and `brightnessctl` for brightness controls.
 
 AUR packages:
 
