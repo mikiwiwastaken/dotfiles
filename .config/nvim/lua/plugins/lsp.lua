@@ -69,6 +69,20 @@ return {
 				settings = { Lua = { diagnostics = { globals = { "vim" } } } },
 			})
 
+			vim.lsp.config("rust_analyzer", {
+				cmd = { "rust-analyzer" },
+				settings = {
+					["rust-analyzer"] = {
+						cargo = {
+							allFeatures = true,
+						},
+						checkOnSave = true,
+					},
+				},
+			})
+
+			vim.lsp.enable("rust_analyzer")
+
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(ev)
 					local map = function(keys, fn, desc)

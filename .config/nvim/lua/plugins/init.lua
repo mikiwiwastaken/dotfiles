@@ -44,6 +44,7 @@ return {
 				"nginx",
 				"git_config",
 				"gitignore",
+				"rust",
 			}
 
 			require("nvim-treesitter").install(parsers)
