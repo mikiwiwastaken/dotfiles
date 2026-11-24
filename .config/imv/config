@@ -2,3 +2,6 @@
 background=1e1e2e
 overlay_text_color=cdd6f4
 overlay_background_color=11111b
+
+[binds]
+w = exec sed -i "s|.*path.*|    path = $imv_current_file|g" "$HOME/.config/hypr/hyprpaper.conf"; exec killall hyprpaper; exec hyprpaper &
