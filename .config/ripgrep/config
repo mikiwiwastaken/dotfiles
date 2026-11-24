@@ -1,0 +1,11 @@
+--heading
+--column
+--line-number
+
+--colors=path:fg:137,180,250
+--colors=path:style:bold
+--colors=line:fg:166,227,161
+--colors=column:fg:148,226,213
+--colors=match:fg:30,30,46
+--colors=match:bg:243,139,168
+--colors=match:style:bold
