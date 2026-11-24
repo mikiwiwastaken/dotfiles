@@ -14,7 +14,7 @@ hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a -n"))
 
 hl.bind("Print", hl.dsp.exec_cmd("~/.local/bin/screenshot full"))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("~/.local/bin/screenshot region"))
-hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.local/bin/screenshot region"))
+hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.local/bin/screenshot window"))
 
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("~/.local/bin/record full"))
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.local/bin/record region"))
@@ -33,11 +33,14 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tru
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
 -------------------------------------------------------------------- hyprland keybinds
-hl.bind(mainMod .. " + Q", hl.dsp.window.close())
--- hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
--- hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))
 hl.bind(mainMod .. " + D", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
+hl.bind(mainMod .. " + C", hl.dsp.window.center())
+hl.bind(mainMod .. " + P", hl.dsp.window.pin())
+hl.bind(mainMod .. " + Q", hl.dsp.window.close())
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.kill())
+
+hl.bind(mainMod .. " + ALT + R", hl.dsp.reload_config())
 
 hl.bind(mainMod .. " + SHIFT + Space", function()
 	local win = hl.get_active_window()
@@ -64,6 +67,7 @@ hl.bind(mainMod .. " + SHIFT + Space", function()
 		relative = false,
 		window = win,
 	}))
+	hl.dispatch(hl.dsp.window.center({ window = win }))
 end)
 
 -------------------------------------------------------------------- focus/swap
@@ -72,18 +76,22 @@ hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
 
+hl.bind(mainMod .. " + CTRL + right", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + CTRL + left", hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+
+hl.bind(mainMod .. " + Tab", hl.dsp.focus({ last = true }))
+
+hl.bind(mainMod .. " + ALT + H", hl.dsp.focus({ monitor = "l" }))
+hl.bind(mainMod .. " + ALT + L", hl.dsp.focus({ monitor = "r" }))
+
 hl.bind(mainMod .. " + SHIFT + H", hl.dsp.window.move({ direction = "left" }))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.move({ direction = "right" }))
 hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.move({ direction = "down" }))
 
-hl.bind("ALT + Tab", hl.dsp.window.cycle_next())
-hl.bind("ALT + SHIFT + Tab", hl.dsp.window.cycle_next({ next = false }))
-
-hl.bind(mainMod .. " + CTRL + right", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + CTRL + left", hl.dsp.focus({ workspace = "e-1" }))
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 
 for i = 1, 10 do
 	local key = i % 10
@@ -100,7 +108,6 @@ hl.bind(mainMod .. " + CTRL + L", hl.dsp.window.resize({ x = 20, y = 0, relative
 hl.bind(mainMod .. " + CTRL + K", hl.dsp.window.resize({ x = 0, y = -20, relative = true }), { repeating = true })
 hl.bind(mainMod .. " + CTRL + J", hl.dsp.window.resize({ x = 0, y = 20, relative = true }), { repeating = true })
 
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -------------------------------------------------------------------- gestures
@@ -108,4 +115,18 @@ hl.gesture({
 	fingers = 3,
 	direction = "horizontal",
 	action = "workspace",
+})
+
+hl.gesture({
+	fingers = 3,
+	direction = "swipe",
+	mods = "CTRL",
+	action = "move",
+})
+
+hl.gesture({
+	fingers = 3,
+	direction = "swipe",
+	mods = "ALT",
+	action = "resize",
 })
