@@ -126,7 +126,7 @@ mpc status   # or open ncmpcpp
 
 ### Notes
 
-- I can't guarantee that the `record` script will work on your machine as I only have one laptop to test it on. Please refer to [wf-recorder(1)](https://man.archlinux.org/man/extra/wf-recorder/wf-recorder.1.en) if you encounter any issues.
+- I can't guarantee that the [record](.local/bin/record) script will work on your machine as I only have one laptop to test it on. Please refer to [wf-recorder(1)](https://man.archlinux.org/man/extra/wf-recorder/wf-recorder.1.en) if you encounter any issues.
 
 ### Optional
 
