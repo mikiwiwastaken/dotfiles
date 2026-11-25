@@ -23,6 +23,7 @@ return {
 					"lua_ls",
 					"marksman",
 					"sqlls",
+					"gopls",
 				},
 				automatic_enable = true,
 			})
@@ -38,6 +39,7 @@ return {
 					"shellcheck",
 					"yamllint",
 					"tflint",
+					"goimports",
 				},
 			})
 
@@ -68,20 +70,6 @@ return {
 			vim.lsp.config("lua_ls", {
 				settings = { Lua = { diagnostics = { globals = { "vim" } } } },
 			})
-
-			vim.lsp.config("rust_analyzer", {
-				cmd = { "rust-analyzer" },
-				settings = {
-					["rust-analyzer"] = {
-						cargo = {
-							allFeatures = true,
-						},
-						checkOnSave = true,
-					},
-				},
-			})
-
-			vim.lsp.enable("rust_analyzer")
 
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(ev)
