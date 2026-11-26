@@ -227,7 +227,6 @@ Add the Hyprland settings to `~/.config/hypr/configs/env.lua`:
 
 ```lua
 hl.env("AQ_DRM_DEVICES", "/dev/dri/intel-igpu:/dev/dri/nvidia-dgpu")
-hl.env("GSK_RENDERER", "gl")
 ```
 
 Switch mpv to the OpenGL API in `~/.config/mpv/mpv.conf`:

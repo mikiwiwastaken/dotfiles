@@ -382,9 +382,8 @@ EOF
   if [[ -f "$env_file" ]]; then
     append_once "$env_file" "AQ_DRM_DEVICES" \
       'hl.env("AQ_DRM_DEVICES", "/dev/dri/intel-igpu:/dev/dri/nvidia-dgpu")'
-    append_once "$env_file" "GSK_RENDERER" 'hl.env("GSK_RENDERER", "gl")'
   else
-    warn "$env_file not found. Add the AQ_DRM_DEVICES and GSK_RENDERER settings manually."
+    warn "$env_file not found. Add the AQ_DRM_DEVICES settings manually."
   fi
 
   log "Switching mpv to the OpenGL GPU API"
