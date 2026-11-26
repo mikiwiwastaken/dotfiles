@@ -242,4 +242,4 @@ Reboot, then confirm modesetting is enabled:
 cat /sys/module/nvidia_drm/parameters/modeset
 ```
 
-For more information, see [NVIDIA](https://wiki.archlinux.org/title/NVIDIA) and [GPU renderer options](https://mpv.io/manual/stable/#gpu-renderer-options) (epilepsy warning).
+For more information, see [NVIDIA](https://wiki.archlinux.org/title/NVIDIA), [Multi-GPU](https://wiki.hypr.land/configuring/extra/multi-gpu/) and [GPU renderer options](https://mpv.io/manual/stable/#gpu-renderer-options) (epilepsy warning).

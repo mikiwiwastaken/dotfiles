@@ -1,6 +1,8 @@
 export EDITOR="nvim"
 export VISUAL="nvim"
 
+export PATH="$PATH:$(go env GOPATH)/bin"
+
 # History
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
