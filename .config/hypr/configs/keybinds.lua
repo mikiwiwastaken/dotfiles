@@ -3,13 +3,13 @@ local mainMod = "SUPER"
 -------------------------------------------------------------------- independent keybinds
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("kitty"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("kitty -e yazi"))
-hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("kitty -e btop"))
+hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("kitty -e btop"))
 hl.bind(mainMod .. " + SUPER_L", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { release = true })
 hl.bind(mainMod .. " + Backspace", hl.dsp.exec_cmd("qs ipc call power toggle"), { release = true })
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("qs ipc call launcher clipboard"))
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call dnd toggle"))
 
-hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("hyprlock"))
+hl.bind("CTRL + ALT + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a -n"))
 
 hl.bind("Print", hl.dsp.exec_cmd("~/.local/bin/screenshot full"))
