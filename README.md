@@ -66,7 +66,7 @@ sudo pacman -Syu --needed \
   qt5-wayland qt6-wayland qt5ct qt6ct kvantum-qt5 kvantum papirus-icon-theme \
   ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji noto-fonts-cjk \
   kitty zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions \
-  starship eza bat ripgrep vivid fd fzf zoxide gdu \
+  starship eza bat ripgrep fd fzf zoxide gdu vivid \
   neovim unzip tree-sitter-cli \
   btop fastfetch cava mpd ncmpcpp \
   yazi ffmpeg 7zip jq poppler resvg \
