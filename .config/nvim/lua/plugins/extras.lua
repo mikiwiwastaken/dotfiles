@@ -11,6 +11,7 @@ return {
 				providers = { "lsp", "treesitter", "regex" },
 				delay = 200,
 				filetypes_denylist = { "oil", "lazy", "mason" },
+				modes_denylist = { "v", "V", "\22" },
 			})
 
 			local function set_illuminate_hl()
